@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Logo Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            min-height: 100px;
+        }
+        img {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 10px;
+        }
+        .log-entry {
+            margin: 5px 0;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Logo Upload</h1>
+    <div class="container">
+        <h2>Upload Test</h2>
+        <form id="uploadForm">
+            <div>
+                <label for="logoFile">Select Logo File:</label>
+                <input type="file" id="logoFile" name="logo" accept="image/png,image/jpeg,image/jpg,image/svg+xml">
+            </div>
+            <div style="margin-top: 10px;">
+                <button type="submit">Upload Logo</button>
+            </div>
+        </form>
+        
+        <div class="result">
+            <h3>Upload Result:</h3>
+            <div id="uploadResult">No upload attempted yet</div>
+            <div id="logoPreview"></div>
+        </div>
+        
+        <h2>Log:</h2>
+        <div class="result" id="log"></div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('logoFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                logMessage('Error: No file selected');
+                return;
+            }
+            
+            logMessage(`Selected file: ${file.name} (${file.type}, ${file.size} bytes)`);
+            
+            const formData = new FormData();
+            formData.append('logo', file);
+            
+            try {
+                logMessage('Sending upload request...');
+                
+                const response = await fetch('/api/admin/branding-settings/logo-upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    logMessage(`Upload successful: ${JSON.stringify(result)}`);
+                    document.getElementById('uploadResult').textContent = JSON.stringify(result, null, 2);
+                    
+                    // Show logo preview
+                    if (result.logoUrl) {
+                        const img = document.createElement('img');
+                        img.src = result.logoUrl;
+                        img.alt = 'Uploaded Logo';
+                        img.onerror = () => {
+                            logMessage(`Error loading image from: ${result.logoUrl}`);
+                        };
+                        img.onload = () => {
+                            logMessage(`Successfully loaded image from: ${result.logoUrl}`);
+                        };
+                        
+                        document.getElementById('logoPreview').innerHTML = '';
+                        document.getElementById('logoPreview').appendChild(img);
+                    }
+                } else {
+                    logMessage(`Upload failed: ${JSON.stringify(result)}`);
+                    document.getElementById('uploadResult').textContent = `Error: ${JSON.stringify(result)}`;
+                }
+            } catch (error) {
+                logMessage(`Error during upload: ${error.message}`);
+                document.getElementById('uploadResult').textContent = `Error: ${error.message}`;
+            }
+        });
+        
+        function logMessage(message) {
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            document.getElementById('log').prepend(logEntry);
+        }
+    </script>
+</body>
+</html>

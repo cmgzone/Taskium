@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Logo Upload Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            min-height: 20px;
+            white-space: pre-wrap;
+        }
+        .file-input {
+            margin-bottom: 15px;
+        }
+        .image-preview {
+            max-width: 300px;
+            max-height: 200px;
+            margin-top: 15px;
+            border: 1px solid #ddd;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>TSK Platform Logo Upload Test</h1>
+    <p>This tool tests various aspects of the logo upload functionality to diagnose issues.</p>
+
+    <div class="test-section">
+        <h2>1. Upload Logo</h2>
+        <div class="file-input">
+            <input type="file" id="logoFile" accept="image/png,image/jpeg,image/jpg,image/svg+xml">
+        </div>
+        <button id="uploadButton">Upload Logo</button>
+        <div class="result" id="uploadResult">Results will appear here...</div>
+        <img id="uploadPreview" class="image-preview" alt="Upload Preview">
+    </div>
+
+    <div class="test-section">
+        <h2>2. Test Directory Access</h2>
+        <button id="testUploadsDir">Test Uploads Directory</button>
+        <button id="testPublicDir">Test Public Directory</button>
+        <div class="result" id="directoryResult">Results will appear here...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. List Existing Logos</h2>
+        <button id="listLogos">List All Logos</button>
+        <div class="result" id="logoListResult">Results will appear here...</div>
+        <div id="logoGallery" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
+    </div>
+
+    <script>
+        // File Upload Test
+        document.getElementById('logoFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Display preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('uploadPreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('uploadButton').addEventListener('click', async function() {
+            const resultElement = document.getElementById('uploadResult');
+            const file = document.getElementById('logoFile').files[0];
+            
+            if (!file) {
+                resultElement.textContent = 'Please select a file first';
+                return;
+            }
+            
+            resultElement.textContent = `Uploading ${file.name} (${file.type}, ${file.size} bytes)...`;
+            
+            try {
+                // Create FormData
+                const formData = new FormData();
+                formData.append('logo', file);
+                
+                // Upload the file
+                const response = await fetch('/api/admin/branding-settings/logo-upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultElement.textContent = `Upload successful!\n\nLogo URL: ${data.logoUrl}\n\nFull Response: ${JSON.stringify(data, null, 2)}`;
+                    
+                    // Test all the URLs
+                    const urlTests = [];
+                    if (data.alternativeUrls && Array.isArray(data.alternativeUrls)) {
+                        for (const url of data.alternativeUrls) {
+                            const imgTest = new Image();
+                            const testPromise = new Promise((resolve) => {
+                                imgTest.onload = () => resolve({ url, success: true });
+                                imgTest.onerror = () => resolve({ url, success: false });
+                                imgTest.src = `${url}?t=${Date.now()}`;
+                            });
+                            urlTests.push(testPromise);
+                        }
+                        
+                        const results = await Promise.all(urlTests);
+                        let urlTestResults = "\n\nURL Tests:";
+                        results.forEach(result => {
+                            urlTestResults += `\n${result.url}: ${result.success ? '✅ Success' : '❌ Failed'}`;
+                        });
+                        
+                        resultElement.textContent += urlTestResults;
+                    }
+                } else {
+                    resultElement.textContent = `Upload failed: ${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultElement.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Directory Tests
+        document.getElementById('testUploadsDir').addEventListener('click', async function() {
+            const resultElement = document.getElementById('directoryResult');
+            resultElement.textContent = 'Testing uploads directory...';
+            
+            try {
+                const response = await fetch('/api/logos-list');
+                const data = await response.json();
+                
+                resultElement.textContent = `Uploads Directory Test:\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultElement.textContent = `Error testing uploads directory: ${error.message}`;
+            }
+        });
+
+        document.getElementById('testPublicDir').addEventListener('click', async function() {
+            const resultElement = document.getElementById('directoryResult');
+            resultElement.textContent = 'Testing public directory...';
+            
+            try {
+                const response = await fetch('/uploads/logos');
+                resultElement.textContent = `Public Directory Test:\nStatus: ${response.status} ${response.statusText}`;
+                
+                if (response.ok) {
+                    try {
+                        const text = await response.text();
+                        resultElement.textContent += `\nResponse: ${text.substring(0, 200)}${text.length > 200 ? '...' : ''}`;
+                    } catch (e) {
+                        resultElement.textContent += '\nCould not read response text.';
+                    }
+                }
+            } catch (error) {
+                resultElement.textContent = `Error testing public directory: ${error.message}`;
+            }
+        });
+
+        // List Logos
+        document.getElementById('listLogos').addEventListener('click', async function() {
+            const resultElement = document.getElementById('logoListResult');
+            const galleryElement = document.getElementById('logoGallery');
+            
+            resultElement.textContent = 'Fetching logo list...';
+            galleryElement.innerHTML = '';
+            
+            try {
+                const response = await fetch('/api/logos-list');
+                const data = await response.json();
+                
+                resultElement.textContent = `Found ${data.logoCount} logos.\nDirectory: ${data.logoDirectory}`;
+                
+                // Create gallery of images
+                if (data.logos && data.logos.length > 0) {
+                    data.logos.forEach(logo => {
+                        const container = document.createElement('div');
+                        container.style.textAlign = 'center';
+                        
+                        const img = document.createElement('img');
+                        img.src = logo.url + '?t=' + Date.now(); // Add cache busting
+                        img.style.maxWidth = '150px';
+                        img.style.maxHeight = '100px';
+                        img.style.border = '1px solid #ddd';
+                        img.style.marginBottom = '5px';
+                        img.alt = logo.filename;
+                        img.onerror = () => {
+                            img.src = '/icons/image-error.png';
+                            img.style.border = '1px solid red';
+                        };
+                        
+                        const label = document.createElement('div');
+                        label.textContent = logo.filename;
+                        label.style.fontSize = '12px';
+                        label.style.wordBreak = 'break-all';
+                        label.style.maxWidth = '150px';
+                        
+                        container.appendChild(img);
+                        container.appendChild(label);
+                        galleryElement.appendChild(container);
+                    });
+                } else {
+                    resultElement.textContent += '\nNo logos found.';
+                }
+            } catch (error) {
+                resultElement.textContent = `Error listing logos: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

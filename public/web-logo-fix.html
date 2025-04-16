@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Logo Fix</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #19466B;
+    }
+    .test-container {
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      background-color: #f8f9fa;
+    }
+    .logo {
+      max-width: 150px;
+      height: auto;
+    }
+    .test-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .test-section {
+      margin-bottom: 30px;
+    }
+    .code-block {
+      background-color: #f1f1f1;
+      padding: 15px;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+    .button-row {
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .status {
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 15px;
+      display: none;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <h1>Web Logo Fix</h1>
+  <p>This page tests and fixes logo display issues on web and mobile interfaces.</p>
+  
+  <div class="test-container">
+    <div class="test-header">
+      <h2>Current Web Logo</h2>
+    </div>
+    
+    <div class="test-section">
+      <h3>Logo Test</h3>
+      <img src="/icons/custom-checkmark-logo.svg" alt="Taskium Logo" id="webLogo" class="logo" onerror="handleLogoError(this, 'webLogo')">
+    </div>
+    
+    <div class="code-block" id="logoInfo">Loading logo information...</div>
+  </div>
+  
+  <div class="test-container">
+    <h2>Apply Logo Fix</h2>
+    <p>Click the button below to update the branding settings with the correct logo path:</p>
+    
+    <div class="button-row">
+      <button onclick="fixWebLogo()">Fix Web Logo</button>
+      <button onclick="fixMobileLogo()">Fix Mobile Logo</button>
+      <button onclick="fixBothLogos()">Fix Both Logos</button>
+    </div>
+    
+    <div id="status" class="status"></div>
+  </div>
+  
+  <div class="test-container">
+    <h2>Logo Integration</h2>
+    <p>Add this code to your HTML to ensure the logo loads properly on all platforms:</p>
+    
+    <div class="code-block">
+&lt;img 
+  src="/icons/custom-checkmark-logo.svg" 
+  alt="Taskium Logo" 
+  onerror="if(this.src !== '/mobile-logo.svg') this.src='/mobile-logo.svg';"
+  style="max-width: 150px; height: auto;"
+&gt;</div>
+  </div>
+  
+  <script>
+    // Function to handle logo errors
+    function handleLogoError(imgElement, id) {
+      console.log(`Logo failed to load: ${imgElement.src}`);
+      
+      const alternatives = [
+        '/mobile-logo.svg',
+        '/taskium-logo.svg',
+        '/icons/taskium-logo.svg'
+      ];
+      
+      // Try next alternative
+      const currentSrc = imgElement.src;
+      let foundIndex = -1;
+      
+      // Find current source in alternatives
+      for (let i = 0; i < alternatives.length; i++) {
+        if (currentSrc.endsWith(alternatives[i])) {
+          foundIndex = i;
+          break;
+        }
+      }
+      
+      // Try next alternative
+      const nextIndex = (foundIndex + 1) % alternatives.length;
+      imgElement.src = alternatives[nextIndex];
+      
+      updateLogoInfo(`Failed to load ${currentSrc}, trying ${alternatives[nextIndex]}`);
+    }
+    
+    // Update logo information
+    function updateLogoInfo(message = null) {
+      const infoElement = document.getElementById('logoInfo');
+      
+      if (message) {
+        infoElement.textContent += `\n${message}`;
+      } else {
+        const logoElement = document.getElementById('webLogo');
+        infoElement.textContent = `Current logo source: ${logoElement.src}\nLogo loaded successfully: ${logoElement.complete}`;
+      }
+    }
+    
+    // Fix web logo
+    async function fixWebLogo() {
+      try {
+        // First, get current settings
+        const getCurrentResponse = await fetch('/api/direct-branding-settings');
+        const currentSettings = await getCurrentResponse.json();
+        
+        // Update with correct web logo path
+        const updatedSettings = {
+          ...currentSettings,
+          logoUrl: '/icons/custom-checkmark-logo.svg',
+          logoType: 'custom',
+          enableCustomBranding: true
+        };
+        
+        // Send update request
+        const response = await fetch('/api/direct-branding-settings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedSettings)
+        });
+        
+        const result = await response.json();
+        showStatus(result.success ? 'success' : 'error', result.success ? 
+          'Web logo updated successfully! The logo will now display properly on web interfaces.' : 
+          `Error: ${result.error || 'Unknown error updating logo'}`);
+          
+      } catch (error) {
+        showStatus('error', `Error: ${error.message}`);
+      }
+    }
+    
+    // Fix mobile logo
+    async function fixMobileLogo() {
+      try {
+        // First, get current settings
+        const getCurrentResponse = await fetch('/api/direct-branding-settings');
+        const currentSettings = await getCurrentResponse.json();
+        
+        // Update with correct mobile logo path
+        const updatedSettings = {
+          ...currentSettings,
+          mobileLogoUrl: '/mobile-logo.svg',
+          logoType: 'custom',
+          enableCustomBranding: true
+        };
+        
+        // Send update request
+        const response = await fetch('/api/direct-branding-settings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedSettings)
+        });
+        
+        const result = await response.json();
+        showStatus(result.success ? 'success' : 'error', result.success ? 
+          'Mobile logo updated successfully! The logo will now display properly on mobile interfaces.' : 
+          `Error: ${result.error || 'Unknown error updating logo'}`);
+          
+      } catch (error) {
+        showStatus('error', `Error: ${error.message}`);
+      }
+    }
+    
+    // Fix both logos
+    async function fixBothLogos() {
+      try {
+        // First, get current settings
+        const getCurrentResponse = await fetch('/api/direct-branding-settings');
+        const currentSettings = await getCurrentResponse.json();
+        
+        // Update with correct logo paths
+        const updatedSettings = {
+          ...currentSettings,
+          logoUrl: '/icons/custom-checkmark-logo.svg',
+          mobileLogoUrl: '/mobile-logo.svg',
+          logoType: 'custom',
+          enableCustomBranding: true
+        };
+        
+        // Send update request
+        const response = await fetch('/api/direct-branding-settings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedSettings)
+        });
+        
+        const result = await response.json();
+        showStatus(result.success ? 'success' : 'error', result.success ? 
+          'Both logos updated successfully! The logos will now display properly on web and mobile interfaces.' : 
+          `Error: ${result.error || 'Unknown error updating logos'}`);
+          
+      } catch (error) {
+        showStatus('error', `Error: ${error.message}`);
+      }
+    }
+    
+    // Show status message
+    function showStatus(type, message) {
+      const statusElement = document.getElementById('status');
+      statusElement.className = `status ${type}`;
+      statusElement.textContent = message;
+      statusElement.style.display = 'block';
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      const logoElement = document.getElementById('webLogo');
+      logoElement.onload = function() {
+        updateLogoInfo(`Logo loaded successfully: ${logoElement.src}`);
+      };
+      
+      // Check initial state
+      if (logoElement.complete) {
+        updateLogoInfo(`Logo loaded successfully: ${logoElement.src}`);
+      }
+    });
+  </script>
+</body>
+</html>

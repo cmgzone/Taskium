@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo Upload & Debug Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f7f9fc;
+            color: #333;
+        }
+        h1, h2 {
+            color: #19466B;
+            border-bottom: 1px solid #e1e4e8;
+            padding-bottom: 10px;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .flex {
+            display: flex;
+            gap: 20px;
+        }
+        .flex > div {
+            flex: 1;
+        }
+        button {
+            background-color: #19466B;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0d2b47;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+        pre {
+            background-color: #f6f8fa;
+            border-radius: 6px;
+            padding: 15px;
+            overflow: auto;
+            font-size: 13px;
+        }
+        .preview {
+            border: 1px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            background: white;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .preview img {
+            max-width: 100%;
+            max-height: 120px;
+        }
+        .preview-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .preview-box {
+            flex: 1;
+            text-align: center;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .logo-test {
+            width: 100%;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #19466B;
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+        }
+        .logo-test img {
+            max-height: 50px;
+        }
+        #tests {
+            margin-top: 20px;
+        }
+        .test-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .test-status {
+            font-weight: bold;
+        }
+        .passed {
+            color: #28a745;
+        }
+        .failed {
+            color: #dc3545;
+        }
+        .in-progress {
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <h1>Logo Upload & Debug Tool</h1>
+    <p>This tool helps you upload custom logos and diagnose issues with the logo display on the login page.</p>
+    
+    <div class="card">
+        <h2>1. Upload New Logo</h2>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div>
+                <label for="logoFile">Select Image File (SVG, PNG, JPG):</label>
+                <input type="file" id="logoFile" name="logo" accept=".svg,.png,.jpg,.jpeg">
+            </div>
+            <button type="submit">Upload Logo</button>
+        </form>
+        <div id="uploadStatus" class="status"></div>
+        
+        <div class="preview-container">
+            <div class="preview-box">
+                <h3>Selected Image Preview</h3>
+                <div class="preview" id="selectedPreview">
+                    <span>No file selected</span>
+                </div>
+            </div>
+            <div class="preview-box">
+                <h3>Uploaded Image Preview</h3>
+                <div class="preview" id="uploadedPreview">
+                    <span>No upload yet</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="flex">
+        <div class="card">
+            <h2>2. View Current Settings</h2>
+            <button id="viewSettingsBtn">Fetch Current Branding Settings</button>
+            <pre id="settingsOutput">Click the button to view current settings...</pre>
+        </div>
+        
+        <div class="card">
+            <h2>3. Update Logo Setting</h2>
+            <div id="logoUrlDisplay">Current Logo URL: <span id="currentLogoUrl">Loading...</span></div>
+            <div id="uploadedUrlDisplay" style="display:none;">
+                New Logo URL: <span id="uploadedLogoUrl"></span>
+                <button id="setAsLogoBtn">Set As Platform Logo</button>
+            </div>
+            <div id="updateStatus" class="status"></div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2>4. Test Logo Display</h2>
+        <p>This section simulates how your logo will appear on a dark background (similar to the login page):</p>
+        
+        <div class="logo-test">
+            <img id="testLogo" src="" alt="Test Logo">
+        </div>
+        
+        <div id="tests">
+            <h3>Diagnostics:</h3>
+            <div class="test-item">
+                <span>Branding API Test: </span>
+                <span id="apiTest" class="test-status in-progress">Running...</span>
+            </div>
+            <div class="test-item">
+                <span>Logo File Access Test: </span>
+                <span id="fileTest" class="test-status in-progress">Running...</span>
+            </div>
+            <div class="test-item">
+                <span>Image Load Test: </span>
+                <span id="loadTest" class="test-status in-progress">Running...</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Global state
+        let uploadedFilePath = null;
+        let currentSettings = null;
+        
+        // DOM Elements
+        const uploadForm = document.getElementById('uploadForm');
+        const uploadStatus = document.getElementById('uploadStatus');
+        const selectedPreview = document.getElementById('selectedPreview');
+        const uploadedPreview = document.getElementById('uploadedPreview');
+        const settingsOutput = document.getElementById('settingsOutput');
+        const currentLogoUrl = document.getElementById('currentLogoUrl');
+        const uploadedLogoUrl = document.getElementById('uploadedLogoUrl');
+        const uploadedUrlDisplay = document.getElementById('uploadedUrlDisplay');
+        const setAsLogoBtn = document.getElementById('setAsLogoBtn');
+        const updateStatus = document.getElementById('updateStatus');
+        const viewSettingsBtn = document.getElementById('viewSettingsBtn');
+        const testLogo = document.getElementById('testLogo');
+        const apiTest = document.getElementById('apiTest');
+        const fileTest = document.getElementById('fileTest');
+        const loadTest = document.getElementById('loadTest');
+        
+        // File input preview
+        document.getElementById('logoFile').addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                selectedPreview.innerHTML = '';
+                
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.onload = function() {
+                        URL.revokeObjectURL(this.src);
+                    }
+                    selectedPreview.appendChild(img);
+                } else {
+                    selectedPreview.innerHTML = '<span>Selected file is not an image</span>';
+                }
+            } else {
+                selectedPreview.innerHTML = '<span>No file selected</span>';
+            }
+        });
+        
+        // Upload logo
+        uploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('logoFile');
+            if (!fileInput.files || !fileInput.files[0]) {
+                uploadStatus.textContent = 'Please select a file first';
+                uploadStatus.className = 'status error';
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('logo', fileInput.files[0]);
+            
+            uploadStatus.textContent = 'Uploading...';
+            uploadStatus.className = 'status';
+            
+            try {
+                const response = await fetch('/api/direct-logo-upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Upload failed');
+                }
+                
+                const data = await response.json();
+                uploadStatus.textContent = 'Upload successful!';
+                uploadStatus.className = 'status success';
+                
+                // Display uploaded image
+                uploadedPreview.innerHTML = '';
+                const img = document.createElement('img');
+                img.src = data.logoUrl;
+                uploadedPreview.appendChild(img);
+                
+                // Store the path for later use
+                uploadedFilePath = data.logoUrl;
+                uploadedLogoUrl.textContent = data.logoUrl;
+                uploadedUrlDisplay.style.display = 'block';
+                
+                // Update test logo
+                testLogo.src = data.logoUrl;
+                
+                // Run file access test
+                testFileAccess(data.logoUrl);
+                
+            } catch (error) {
+                uploadStatus.textContent = `Error: ${error.message}`;
+                uploadStatus.className = 'status error';
+                console.error('Upload error:', error);
+            }
+        });
+        
+        // Fetch and display current settings
+        viewSettingsBtn.addEventListener('click', fetchBrandingSettings);
+        
+        // Set as platform logo
+        setAsLogoBtn.addEventListener('click', async function() {
+            if (!uploadedFilePath) {
+                updateStatus.textContent = 'No uploaded file to set';
+                updateStatus.className = 'status error';
+                return;
+            }
+            
+            updateStatus.textContent = 'Updating settings...';
+            updateStatus.className = 'status';
+            
+            try {
+                const response = await fetch('/api/update-branding-settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        logoUrl: uploadedFilePath,
+                        logoType: 'custom'
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Update failed');
+                }
+                
+                updateStatus.textContent = 'Logo setting updated successfully!';
+                updateStatus.className = 'status success';
+                
+                // Refresh settings display
+                fetchBrandingSettings();
+                
+            } catch (error) {
+                updateStatus.textContent = `Error: ${error.message}`;
+                updateStatus.className = 'status error';
+                console.error('Update error:', error);
+            }
+        });
+        
+        // Fetch branding settings function
+        async function fetchBrandingSettings() {
+            settingsOutput.textContent = 'Loading...';
+            apiTest.textContent = 'Running...';
+            apiTest.className = 'test-status in-progress';
+            
+            try {
+                const response = await fetch('/api/direct-branding-settings');
+                
+                if (!response.ok) {
+                    apiTest.textContent = 'Failed';
+                    apiTest.className = 'test-status failed';
+                    throw new Error('Failed to fetch branding settings');
+                }
+                
+                const data = await response.json();
+                currentSettings = data;
+                
+                // Format JSON with indentation
+                settingsOutput.textContent = JSON.stringify(data, null, 2);
+                currentLogoUrl.textContent = data.logoUrl || 'None';
+                
+                // Set test logo
+                testLogo.src = data.logoUrl || '';
+                
+                // Mark API test as passed
+                apiTest.textContent = 'Passed';
+                apiTest.className = 'test-status passed';
+                
+                // Test file access for current logo
+                if (data.logoUrl) {
+                    testFileAccess(data.logoUrl);
+                }
+                
+                return data;
+                
+            } catch (error) {
+                settingsOutput.textContent = `Error: ${error.message}`;
+                console.error('Settings fetch error:', error);
+                apiTest.textContent = 'Failed';
+                apiTest.className = 'test-status failed';
+                return null;
+            }
+        }
+        
+        // Test if a file is accessible
+        async function testFileAccess(url) {
+            fileTest.textContent = 'Running...';
+            fileTest.className = 'test-status in-progress';
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'HEAD'
+                });
+                
+                if (response.ok) {
+                    fileTest.textContent = 'Passed';
+                    fileTest.className = 'test-status passed';
+                    
+                    // Now test image loading
+                    testImageLoad(url);
+                    return true;
+                } else {
+                    fileTest.textContent = 'Failed (HTTP status: ' + response.status + ')';
+                    fileTest.className = 'test-status failed';
+                    return false;
+                }
+            } catch (error) {
+                fileTest.textContent = 'Failed (Network error)';
+                fileTest.className = 'test-status failed';
+                console.error('File access test error:', error);
+                return false;
+            }
+        }
+        
+        // Test if image loads correctly
+        function testImageLoad(url) {
+            loadTest.textContent = 'Running...';
+            loadTest.className = 'test-status in-progress';
+            
+            const img = new Image();
+            
+            img.onload = function() {
+                loadTest.textContent = 'Passed (Image loaded successfully)';
+                loadTest.className = 'test-status passed';
+            };
+            
+            img.onerror = function() {
+                loadTest.textContent = 'Failed (Image could not be loaded)';
+                loadTest.className = 'test-status failed';
+            };
+            
+            img.src = url;
+        }
+        
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            // Fetch initial settings
+            fetchBrandingSettings();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "123456789012",
+    "firebase_url": "https://tskplatform-app.firebaseio.com",
+    "project_id": "tskplatform-app",
+    "storage_bucket": "tskplatform-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:123456789012:android:abcdef1234567890",
+        "android_client_info": {
+          "package_name": "com.tskplatform.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "123456789012-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIza-SAMPLE-KEY-REPLACE-WITH-ACTUAL-KEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "123456789012-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

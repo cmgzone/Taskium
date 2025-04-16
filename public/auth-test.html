@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authentication Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+    }
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .error {
+      color: #ff0000;
+      margin-bottom: 15px;
+    }
+    .success {
+      color: #4CAF50;
+      margin-bottom: 15px;
+    }
+    pre {
+      background-color: #f8f8f8;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    .demo-button {
+      background-color: #2196F3;
+    }
+    .demo-button:hover {
+      background-color: #0b7dda;
+    }
+    .test-methods {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .test-methods button {
+      flex: 1;
+    }
+    .regular-auth {
+      background-color: #ff9800;
+    }
+    .regular-auth:hover {
+      background-color: #e68a00;
+    }
+    .test-auth {
+      background-color: #2196F3;
+    }
+    .test-auth:hover {
+      background-color: #0b7dda;
+    }
+    .logout-button {
+      background-color: #f44336;
+    }
+    .logout-button:hover {
+      background-color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <h1>Authentication Test Page</h1>
+  
+  <div class="card">
+    <h2>Login Test</h2>
+    <div id="errorMessage" class="error" style="display: none;"></div>
+    <div id="successMessage" class="success" style="display: none;"></div>
+    
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" placeholder="Enter username">
+    </div>
+    
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" placeholder="Enter password">
+    </div>
+    
+    <div class="test-methods">
+      <button class="regular-auth" onclick="testRegularAuth()">Test Regular Login</button>
+      <button class="test-auth" onclick="testAuth()">Test Auth API</button>
+    </div>
+    
+    <button class="demo-button" onclick="setupDemoUser()">Create & Use Demo User</button>
+    <button class="logout-button" onclick="testLogout()">Test Logout</button>
+  </div>
+  
+  <div class="card">
+    <h2>Results</h2>
+    <pre id="results">No results yet.</pre>
+  </div>
+  
+  <div class="card">
+    <h2>Current Session</h2>
+    <button onclick="checkCurrentUser()">Check Current User</button>
+    <pre id="currentUser">No user information yet.</pre>
+  </div>
+
+  <script>
+    // Helper to display messages
+    function showError(message) {
+      const errorElement = document.getElementById('errorMessage');
+      errorElement.textContent = message;
+      errorElement.style.display = 'block';
+      document.getElementById('successMessage').style.display = 'none';
+    }
+    
+    function showSuccess(message) {
+      const successElement = document.getElementById('successMessage');
+      successElement.textContent = message;
+      successElement.style.display = 'block';
+      document.getElementById('errorMessage').style.display = 'none';
+    }
+    
+    function updateResults(data) {
+      document.getElementById('results').textContent = JSON.stringify(data, null, 2);
+    }
+
+    // Test the regular login endpoint
+    async function testRegularAuth() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      if (!username || !password) {
+        showError('Username and password are required');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password }),
+          credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          showError(data.message || 'Login failed');
+        } else {
+          showSuccess('Login successful!');
+        }
+        
+        updateResults(data);
+        
+        // After successful login, check the current user
+        if (response.ok) {
+          setTimeout(checkCurrentUser, 500);
+        }
+      } catch (error) {
+        showError('Error: ' + error.message);
+        updateResults({ error: error.message });
+      }
+    }
+    
+    // Test the auth-test endpoint
+    async function testAuth() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      if (!username || !password) {
+        showError('Username and password are required');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/auth-test', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password }),
+          credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+          showError(data.message || 'Authentication test failed');
+        } else {
+          showSuccess('Authentication test successful!');
+        }
+        
+        updateResults(data);
+      } catch (error) {
+        showError('Error: ' + error.message);
+        updateResults({ error: error.message });
+      }
+    }
+    
+    // Create and use demo user
+    async function setupDemoUser() {
+      try {
+        // First create the demo user
+        const createResponse = await fetch('/api/create-demo-user', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!createResponse.ok) {
+          const errorData = await createResponse.json();
+          showError('Failed to create demo user: ' + (errorData.message || createResponse.statusText));
+          return;
+        }
+        
+        const createData = await createResponse.json();
+        updateResults({ createDemoUser: createData });
+        
+        // Fill in the form with demo credentials
+        document.getElementById('username').value = 'demo';
+        document.getElementById('password').value = 'password';
+        
+        showSuccess('Demo user ready! Click either login button to test.');
+      } catch (error) {
+        showError('Error: ' + error.message);
+        updateResults({ error: error.message });
+      }
+    }
+    
+    // Test logout
+    async function testLogout() {
+      try {
+        const response = await fetch('/api/logout', {
+          method: 'POST',
+          credentials: 'include'
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          showError('Logout failed: ' + (errorData.message || response.statusText));
+        } else {
+          showSuccess('Logout successful!');
+          const data = await response.json();
+          updateResults(data);
+          
+          // Check current user after logout
+          setTimeout(checkCurrentUser, 500);
+        }
+      } catch (error) {
+        showError('Error: ' + error.message);
+        updateResults({ error: error.message });
+      }
+    }
+    
+    // Check current user
+    async function checkCurrentUser() {
+      try {
+        const response = await fetch('/api/user', {
+          method: 'GET',
+          credentials: 'include'
+        });
+        
+        let userEl = document.getElementById('currentUser');
+        
+        if (response.status === 401) {
+          userEl.textContent = 'Not logged in (status 401)';
+          return;
+        }
+        
+        if (!response.ok) {
+          userEl.textContent = `Error checking user: ${response.status} ${response.statusText}`;
+          return;
+        }
+        
+        const userData = await response.json();
+        userEl.textContent = JSON.stringify(userData, null, 2);
+      } catch (error) {
+        document.getElementById('currentUser').textContent = 'Error: ' + error.message;
+      }
+    }
+    
+    // Check current user on page load
+    window.addEventListener('DOMContentLoaded', checkCurrentUser);
+  </script>
+</body>
+</html>

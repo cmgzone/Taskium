@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple File Upload Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .upload-container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .upload-result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            min-height: 50px;
+            display: none;
+        }
+        .button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .preview-image {
+            max-width: 300px;
+            max-height: 300px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>File Upload Test</h1>
+    
+    <div class="upload-container">
+        <h2>1. Ad Image Upload</h2>
+        <form id="adForm">
+            <input type="file" id="adFile" accept="image/*">
+            <button type="button" class="button" onclick="uploadFile('adFile', '/api/admin/upload/ad-image', 'adResult')">Upload Ad Image</button>
+        </form>
+        <div id="adResult" class="upload-result"></div>
+        <img id="adPreview" class="preview-image" alt="Ad Preview">
+    </div>
+    
+    <div class="upload-container">
+        <h2>2. Logo Upload</h2>
+        <form id="logoForm">
+            <input type="file" id="logoFile" accept="image/*">
+            <button type="button" class="button" onclick="uploadFile('logoFile', '/api/direct-logo-upload', 'logoResult')">Upload Logo</button>
+        </form>
+        <div id="logoResult" class="upload-result"></div>
+        <img id="logoPreview" class="preview-image" alt="Logo Preview">
+    </div>
+    
+    <div class="upload-container">
+        <h2>3. Banner Image Upload</h2>
+        <form id="bannerForm">
+            <input type="file" id="bannerFile" accept="image/*">
+            <button type="button" class="button" onclick="uploadFile('bannerFile', '/api/admin/upload/banner-image', 'bannerResult')">Upload Banner</button>
+        </form>
+        <div id="bannerResult" class="upload-result"></div>
+        <img id="bannerPreview" class="preview-image" alt="Banner Preview">
+    </div>
+    
+    <div class="upload-container">
+        <h2>4. KYC Document Upload</h2>
+        <form id="kycForm">
+            <select id="kycType">
+                <option value="front">Front ID</option>
+                <option value="back">Back ID</option>
+                <option value="selfie">Selfie</option>
+            </select>
+            <input type="file" id="kycFile" accept="image/*">
+            <button type="button" class="button" onclick="uploadKycFile()">Upload KYC Document</button>
+        </form>
+        <div id="kycResult" class="upload-result"></div>
+        <img id="kycPreview" class="preview-image" alt="KYC Preview">
+    </div>
+
+    <script>
+        function uploadFile(fileInputId, endpoint, resultDivId) {
+            const fileInput = document.getElementById(fileInputId);
+            const resultDiv = document.getElementById(resultDivId);
+            const previewImg = document.getElementById(fileInputId.replace('File', 'Preview'));
+            
+            resultDiv.style.display = 'block';
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                resultDiv.innerHTML = 'Please select a file first';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            resultDiv.innerHTML = `Uploading ${file.name} (${file.size} bytes, ${file.type})...`;
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('file', file);  // Use 'file' as field name for most endpoints
+            
+            // Special case for logo upload
+            if (endpoint === '/api/direct-logo-upload') {
+                formData.delete('file');
+                formData.append('logo', file);  // Logo endpoint expects 'logo' as field name
+            }
+            
+            // Send the request
+            fetch(endpoint, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                resultDiv.innerHTML = `<strong>Success!</strong><br>
+                    Upload completed successfully.<br>
+                    ${JSON.stringify(data, null, 2)}`;
+                
+                // Show preview of uploaded image
+                const imageUrl = data.imageUrl;
+                if (imageUrl) {
+                    previewImg.src = imageUrl;
+                    previewImg.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                resultDiv.innerHTML = `<strong>Error:</strong><br>
+                    ${error.message}<br>
+                    Check console for more details.`;
+                console.error('Upload error:', error);
+            });
+        }
+        
+        function uploadKycFile() {
+            const fileInput = document.getElementById('kycFile');
+            const typeSelect = document.getElementById('kycType');
+            const resultDiv = document.getElementById('kycResult');
+            const previewImg = document.getElementById('kycPreview');
+            
+            resultDiv.style.display = 'block';
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                resultDiv.innerHTML = 'Please select a file first';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const type = typeSelect.value;
+            
+            resultDiv.innerHTML = `Uploading ${type} document ${file.name} (${file.size} bytes, ${file.type})...`;
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('type', type);
+            
+            // Send the request
+            fetch('/api/upload/kyc-image', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                resultDiv.innerHTML = `<strong>Success!</strong><br>
+                    Uploaded ${type} document successfully.<br>
+                    ${JSON.stringify(data, null, 2)}`;
+                
+                // Show preview of uploaded image
+                const imageUrl = data.imageUrl;
+                if (imageUrl) {
+                    previewImg.src = imageUrl;
+                    previewImg.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                resultDiv.innerHTML = `<strong>Error:</strong><br>
+                    ${error.message}<br>
+                    Check console for more details.`;
+                console.error('Upload error:', error);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow authorized users to read their own data
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false;  // Only allow writes through Firebase Functions
+    }
+    
+    // Lock down other collections to admin access only
+    match /{document=**} {
+      allow read, write: if false;  // Only allow access through Firebase Functions API
+    }
+  }
+}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TSK Platform - Offline</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background-color: #f0f8ff;
+        color: #19466B;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+      }
+      .container {
+        max-width: 500px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+      }
+      img {
+        max-width: 120px;
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-size: 24px;
+        margin-bottom: 16px;
+        color: #19466B;
+      }
+      p {
+        margin-bottom: 24px;
+        line-height: 1.5;
+        color: #445566;
+      }
+      button {
+        background-color: #19466B;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      button:hover {
+        background-color: #2567A3;
+      }
+      .mining-note {
+        margin-top: 20px;
+        font-size: 14px;
+        color: #667788;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img src="/icons/app-icon-192.svg" alt="TSK Platform Logo" />
+      <h1>You're Offline</h1>
+      <p>Don't worry! TSK Platform can still work offline. Some features may be limited, but your mining activities will continue.</p>
+      <button onclick="window.location.reload()">Try Again</button>
+      <p class="mining-note">Your mining rewards will be synchronized when you're back online.</p>
+    </div>
+    
+    <script>
+      // Listen for online status changes
+      window.addEventListener('online', () => {
+        window.location.reload();
+      });
+    </script>
+  </body>
+</html>

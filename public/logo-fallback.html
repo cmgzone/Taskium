@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logo Fallback</title>
+  <style>
+    #logo-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .logo-img {
+      max-width: 150px;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="logo-container">
+    <img src="/taskium-logo.svg" alt="Taskium Logo" class="logo-img" id="logoImage" onerror="handleImageError()">
+  </div>
+
+  <script>
+    function handleImageError() {
+      console.log('Primary logo failed to load, trying fallback...');
+      // Try these alternatives in sequence
+      var alternativeLogos = [
+        '/mobile-logo.svg',
+        '/icons/taskium-logo.svg',
+        '/icons/custom-checkmark-logo.svg',
+        '/taskium-logo.png'  // Final fallback to PNG
+      ];
+      
+      var logoImg = document.getElementById('logoImage');
+      var currentIndex = 0;
+      
+      function tryNextLogo() {
+        if (currentIndex < alternativeLogos.length) {
+          logoImg.src = alternativeLogos[currentIndex];
+          currentIndex++;
+          console.log('Trying logo: ' + logoImg.src);
+        }
+      }
+      
+      // Set up error handler for subsequent attempts
+      logoImg.onerror = function() {
+        console.log('Logo failed to load: ' + logoImg.src);
+        tryNextLogo();
+      };
+      
+      // Try the first alternative
+      tryNextLogo();
+    }
+  </script>
+</body>
+</html>

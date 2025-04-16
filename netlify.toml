@@ -1,0 +1,15 @@
+[build]
+  # Directory to publish (frontend build output)
+  publish = "dist"
+  # Build command to run
+  command = "chmod +x netlify-build.sh && ./netlify-build.sh"
+
+# Handle SPA routing (for React Router) 
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Environment variables can be set here (non-sensitive ones)
+[build.environment]
+  NODE_VERSION = "18"

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Logo Upload Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f8f8f8;
+            min-height: 100px;
+        }
+        #imagePreview {
+            max-width: 100%;
+            max-height: 300px;
+            margin-top: 15px;
+            border: 1px solid #ddd;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Logo Upload Test</h1>
+    <p>This page tests the direct file upload functionality to isolate any issues.</p>
+    
+    <form id="uploadForm">
+        <div class="form-group">
+            <label for="logoFile">Select Logo File (PNG, JPG, SVG):</label>
+            <input type="file" id="logoFile" name="logo" accept="image/png,image/jpeg,image/jpg,image/svg+xml">
+        </div>
+        <button type="submit">Upload Logo</button>
+    </form>
+    
+    <div id="result">
+        <h3>Upload Result:</h3>
+        <pre id="resultContent">No upload attempt yet</pre>
+        <img id="imagePreview" src="" alt="Logo Preview">
+    </div>
+    
+    <div>
+        <h3>Try Alternative URLs:</h3>
+        <div id="alternativeUrls"></div>
+    </div>
+    
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('logoFile');
+            const resultContent = document.getElementById('resultContent');
+            const imagePreview = document.getElementById('imagePreview');
+            const alternativeUrlsDiv = document.getElementById('alternativeUrls');
+            
+            if (!fileInput.files.length) {
+                resultContent.textContent = 'Please select a file';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            console.log('Attempting to upload:', file.name, file.type, file.size, 'bytes');
+            
+            const formData = new FormData();
+            formData.append('logo', file);
+            
+            try {
+                resultContent.textContent = 'Uploading...';
+                imagePreview.style.display = 'none';
+                
+                const response = await fetch('/api/admin/branding-settings/logo-upload', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin'
+                });
+                
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                resultContent.textContent = JSON.stringify(data, null, 2);
+                
+                if (response.ok && data.logoUrl) {
+                    // Try to display the image with timestamp to avoid caching
+                    const previewUrl = `${data.logoUrl}?t=${Date.now()}`;
+                    imagePreview.src = previewUrl;
+                    imagePreview.style.display = 'block';
+                    
+                    // Show alternative URLs if available
+                    alternativeUrlsDiv.innerHTML = '';
+                    if (data.alternativeUrls) {
+                        data.alternativeUrls.forEach(url => {
+                            const urlWithTimestamp = `${url}?t=${Date.now()}`;
+                            const link = document.createElement('a');
+                            link.href = urlWithTimestamp;
+                            link.textContent = url;
+                            link.target = '_blank';
+                            link.style.display = 'block';
+                            link.style.marginBottom = '5px';
+                            alternativeUrlsDiv.appendChild(link);
+                            
+                            // Also create an image to test loading
+                            const testImg = document.createElement('img');
+                            testImg.src = urlWithTimestamp;
+                            testImg.style.width = '100px';
+                            testImg.style.height = 'auto';
+                            testImg.style.marginRight = '10px';
+                            testImg.style.border = '1px solid #ddd';
+                            testImg.alt = url;
+                            testImg.onerror = () => {
+                                testImg.style.border = '1px solid red';
+                                testImg.alt = 'Failed to load';
+                                testImg.style.height = '60px';
+                            };
+                            alternativeUrlsDiv.appendChild(testImg);
+                            alternativeUrlsDiv.appendChild(document.createElement('br'));
+                        });
+                    } else {
+                        const filename = data.logoUrl.split('/').pop();
+                        const alternativeUrls = [
+                            data.logoUrl,
+                            `/api/logos/${filename}`,
+                            `/uploads/logos/${filename}`
+                        ];
+                        
+                        alternativeUrls.forEach(url => {
+                            const urlWithTimestamp = `${url}?t=${Date.now()}`;
+                            const link = document.createElement('a');
+                            link.href = urlWithTimestamp;
+                            link.textContent = url;
+                            link.target = '_blank';
+                            link.style.display = 'block';
+                            link.style.marginBottom = '5px';
+                            alternativeUrlsDiv.appendChild(link);
+                            
+                            // Also create an image to test loading
+                            const testImg = document.createElement('img');
+                            testImg.src = urlWithTimestamp;
+                            testImg.style.width = '100px';
+                            testImg.style.height = 'auto';
+                            testImg.style.marginRight = '10px';
+                            testImg.style.border = '1px solid #ddd';
+                            testImg.alt = url;
+                            testImg.onerror = () => {
+                                testImg.style.border = '1px solid red';
+                                testImg.alt = 'Failed to load';
+                                testImg.style.height = '60px';
+                            };
+                            alternativeUrlsDiv.appendChild(testImg);
+                            alternativeUrlsDiv.appendChild(document.createElement('br'));
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error uploading logo:', error);
+                resultContent.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

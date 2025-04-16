@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TSK Platform</string>
+    
+    <!-- Main Activity -->
+    <string name="error_title">Error</string>
+    <string name="connection_error">Connection error. Please check your internet connection.</string>
+    
+    <!-- Offline Screen -->
+    <string name="offline_title">You\'re Offline</string>
+    <string name="offline_message">Please check your internet connection and try again.</string>
+    <string name="offline_icon_description">Offline icon</string>
+    <string name="retry_button">Retry</string>
+    
+    <!-- WebView Messages -->
+    <string name="loading">Loading…</string>
+    <string name="share_title">Share via</string>
+    
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="notifications">Notifications</string>
+    <string name="about">About</string>
+    <string name="version">Version</string>
+    <string name="logout">Logout</string>
+    <string name="logout_confirmation">Are you sure you want to log out?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+
+    <!-- Mining -->
+    <string name="mining_notification_title">TSK Mining Active</string>
+    <string name="mining_notification_text">Mining in progress…</string>
+    <string name="mining_complete">Mining complete!</string>
+    <string name="tokens_earned">You earned %1$s TSK</string>
+    
+    <!-- Login/Auth -->
+    <string name="login_error">Login failed. Please try again.</string>
+    <string name="auth_expired">Your session has expired. Please log in again.</string>
+    
+    <!-- Misc -->
+    <string name="copy_to_clipboard">Copied to clipboard</string>
+    <string name="share">Share</string>
+    <string name="refresh">Refresh</string>
+</resources>

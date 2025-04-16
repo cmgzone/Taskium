@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo Upload and Set</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .result {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            min-height: 100px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        img {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+        .step {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-left: 4px solid #4CAF50;
+            margin-bottom: 15px;
+        }
+        .instructions {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Logo Upload and Set as Platform Logo</h1>
+    
+    <div class="instructions">
+        <p>This tool helps you upload a logo and set it as the platform's main logo in just two steps:</p>
+        
+        <div class="step">
+            <h3>Step 1: Upload your logo</h3>
+            <p>Select an image file (PNG, JPG, or SVG) and upload it to the server.</p>
+        </div>
+        
+        <div class="step">
+            <h3>Step 2: Set as platform logo</h3>
+            <p>After uploading, click the button to set this image as your platform's main logo.</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>Step 1: Upload Logo</h2>
+        <form id="uploadForm">
+            <div>
+                <input type="file" id="logoFile" accept="image/png,image/jpeg,image/jpg,image/svg+xml">
+            </div>
+            <button type="button" onclick="uploadLogo()">Upload Logo</button>
+        </form>
+        <div id="uploadResult" class="result" style="display: none;"></div>
+        <div id="previewContainer" style="display: none; margin-top: 15px;">
+            <h3>Preview:</h3>
+            <img id="logoPreview" alt="Logo Preview">
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>Step 2: Set as Platform Logo</h2>
+        <p>Once your logo is uploaded, click below to set it as the platform logo:</p>
+        <button type="button" id="setLogoButton" onclick="setAsMainLogo()" disabled>Set as Platform Logo</button>
+        <div id="setLogoResult" class="result" style="display: none;"></div>
+    </div>
+    
+    <div class="container">
+        <h2>Current Branding Settings</h2>
+        <button type="button" onclick="viewCurrentSettings()">View Current Settings</button>
+        <div id="currentSettings" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        let uploadedLogoUrl = null;
+        
+        async function uploadLogo() {
+            const fileInput = document.getElementById('logoFile');
+            const uploadResult = document.getElementById('uploadResult');
+            const previewContainer = document.getElementById('previewContainer');
+            const logoPreview = document.getElementById('logoPreview');
+            const setLogoButton = document.getElementById('setLogoButton');
+            
+            uploadResult.style.display = 'block';
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                uploadResult.textContent = 'Please select a file first';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            uploadResult.textContent = `Uploading ${file.name} (${Math.round(file.size/1024)} KB, ${file.type})...`;
+            
+            try {
+                // Create form data
+                const formData = new FormData();
+                formData.append('logo', file);
+                
+                // Send the request
+                const response = await fetch('/api/direct-logo-upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                uploadResult.textContent = `Upload successful!\n\nServer Response:\n${JSON.stringify(data, null, 2)}`;
+                
+                // Show preview and enable set logo button
+                uploadedLogoUrl = data.imageUrl;
+                logoPreview.src = uploadedLogoUrl;
+                previewContainer.style.display = 'block';
+                setLogoButton.disabled = false;
+                
+            } catch (error) {
+                uploadResult.textContent = `Error: ${error.message}\nPlease check browser console for details.`;
+                console.error('Upload error:', error);
+            }
+        }
+        
+        async function setAsMainLogo() {
+            const setLogoResult = document.getElementById('setLogoResult');
+            setLogoResult.style.display = 'block';
+            
+            if (!uploadedLogoUrl) {
+                setLogoResult.textContent = 'Please upload a logo first.';
+                return;
+            }
+            
+            setLogoResult.textContent = 'Setting as platform logo...';
+            
+            try {
+                // Get current settings first
+                const getResponse = await fetch('/api/direct-branding-settings');
+                const currentSettings = await getResponse.json();
+                
+                // Prepare updated settings
+                const updatedSettings = {
+                    ...currentSettings,
+                    logoUrl: uploadedLogoUrl,
+                    logoType: 'custom'
+                };
+                
+                // Send update request
+                const response = await fetch('/api/direct-branding-settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedSettings)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                setLogoResult.textContent = `Logo set as platform logo successfully!\n\nServer Response:\n${JSON.stringify(data, null, 2)}`;
+                
+            } catch (error) {
+                setLogoResult.textContent = `Error: ${error.message}\nPlease check browser console for details.`;
+                console.error('Set logo error:', error);
+            }
+        }
+        
+        async function viewCurrentSettings() {
+            const currentSettings = document.getElementById('currentSettings');
+            currentSettings.style.display = 'block';
+            currentSettings.textContent = 'Loading current settings...';
+            
+            try {
+                const response = await fetch('/api/direct-branding-settings');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                currentSettings.textContent = JSON.stringify(data, null, 2);
+                
+            } catch (error) {
+                currentSettings.textContent = `Error: ${error.message}\nPlease check browser console for details.`;
+                console.error('Get settings error:', error);
+            }
+        }
+    </script>
+</body>
+</html>

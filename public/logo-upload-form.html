@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo Upload Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .upload-container {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .preview-container {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .preview-container img {
+            max-width: 300px;
+            max-height: 300px;
+            border: 1px solid #ddd;
+            padding: 5px;
+            background: #f9f9f9;
+        }
+        .result-container {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            display: none;
+        }
+        .button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .logo-list {
+            margin-top: 30px;
+        }
+        .logo-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .logo-thumbnail {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-right: 15px;
+            background: #f0f0f0;
+            padding: 5px;
+            border: 1px solid #ddd;
+        }
+        .logo-details {
+            flex: 1;
+        }
+        pre {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Logo Upload Form</h1>
+    <p>Use this form to upload a new logo for your platform. Supported file types: JPEG, PNG, SVG.</p>
+    
+    <div class="upload-container">
+        <form id="uploadForm" enctype="multipart/form-data">
+            <label for="logoFile">Select logo file:</label><br>
+            <input type="file" id="logoFile" name="logo" accept=".jpg,.jpeg,.png,.svg" required><br><br>
+            
+            <div class="preview-container" id="previewContainer">
+                <h3>Preview:</h3>
+                <img id="preview" src="#" alt="Logo preview">
+            </div>
+            
+            <button type="submit" class="button" id="uploadButton">Upload Logo</button>
+        </form>
+    </div>
+    
+    <div class="result-container" id="resultContainer">
+        <h3>Upload Result:</h3>
+        <div id="result"></div>
+    </div>
+    
+    <div class="logo-list" id="logoList">
+        <h2>Available Logos</h2>
+        <div id="logoListItems">Loading...</div>
+    </div>
+    
+    <script>
+        // Preview the selected image
+        document.getElementById('logoFile').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('preview');
+                    preview.src = e.target.result;
+                    document.getElementById('previewContainer').style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Handle form submission
+        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const fileInput = document.getElementById('logoFile');
+            const uploadButton = document.getElementById('uploadButton');
+            const resultContainer = document.getElementById('resultContainer');
+            const resultDiv = document.getElementById('result');
+            
+            if (!fileInput.files[0]) {
+                alert('Please select a file to upload');
+                return;
+            }
+            
+            // Create FormData
+            const formData = new FormData();
+            formData.append('logo', fileInput.files[0]);
+            
+            // Disable button during upload
+            uploadButton.disabled = true;
+            uploadButton.textContent = 'Uploading...';
+            
+            try {
+                // Use the direct upload endpoint
+                const response = await fetch('/api/direct-logo-upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                // Display result
+                resultContainer.style.display = 'block';
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div style="color: green; font-weight: bold;">Upload Successful!</div>
+                        <p>Logo URL: <code>${result.logoUrl}</code></p>
+                        <p>Alternative URLs:</p>
+                        <ul>
+                            ${result.alternativeUrls.map(url => `<li><code>${url}</code></li>`).join('')}
+                        </ul>
+                        <p>You can use any of these URLs to reference your logo.</p>
+                        <div>Preview:</div>
+                        <img src="${result.logoUrl}" alt="Uploaded logo" style="max-width: 200px; max-height: 200px;">
+                    `;
+                    
+                    // Refresh the logo list after successful upload
+                    loadLogoList();
+                } else {
+                    resultDiv.innerHTML = `
+                        <div style="color: red; font-weight: bold;">Upload Failed</div>
+                        <p>Error: ${result.error || 'Unknown error'}</p>
+                    `;
+                }
+            } catch (error) {
+                resultContainer.style.display = 'block';
+                resultDiv.innerHTML = `
+                    <div style="color: red; font-weight: bold;">Upload Failed</div>
+                    <p>Error: ${error.message}</p>
+                `;
+            } finally {
+                // Re-enable button
+                uploadButton.disabled = false;
+                uploadButton.textContent = 'Upload Logo';
+            }
+        });
+        
+        // Load existing logos
+        async function loadLogoList() {
+            const logoListItems = document.getElementById('logoListItems');
+            
+            try {
+                const response = await fetch('/api/logos-list');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (data.logos && data.logos.length > 0) {
+                        const logoItems = data.logos.map(logo => `
+                            <div class="logo-item">
+                                <img src="${logo.url}" alt="${logo.filename}" class="logo-thumbnail">
+                                <div class="logo-details">
+                                    <strong>${logo.filename}</strong>
+                                    <div>Size: ${formatFileSize(logo.size)}</div>
+                                    <div>Created: ${new Date(logo.created).toLocaleString()}</div>
+                                    <div>URLs: 
+                                        <a href="${logo.url}" target="_blank">Direct</a> | 
+                                        <a href="${logo.apiUrl}" target="_blank">API</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                        
+                        logoListItems.innerHTML = logoItems;
+                    } else {
+                        logoListItems.innerHTML = '<p>No logos available.</p>';
+                    }
+                } else {
+                    logoListItems.innerHTML = '<p>Error loading logos: ' + response.statusText + '</p>';
+                }
+            } catch (error) {
+                logoListItems.innerHTML = '<p>Error loading logos: ' + error.message + '</p>';
+            }
+        }
+        
+        // Format file size for display
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' bytes';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            else return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+        
+        // Load logos when page loads
+        window.addEventListener('load', loadLogoList);
+    </script>
+</body>
+</html>

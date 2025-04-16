@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <!-- Background for maskable icon (with safe zone) -->
+  <rect width="192" height="192" fill="#e6f2f7"/>
+  
+  <!-- Centered icon (80% of total size) -->
+  <g transform="translate(19.2, 19.2) scale(0.8)">
+    <!-- Circle outline -->
+    <circle cx="96" cy="96" r="75" fill="none" stroke="#19466B" stroke-width="10"/>
+    
+    <!-- Checkmark path with circuit elements - scaled for this viewBox -->
+    <path d="M64 98 L83 117 L132 68" stroke="#19466B" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    
+    <!-- Circuit dots and connections -->
+    <circle cx="64" cy="98" r="4" fill="#19466B"/>
+    <circle cx="83" cy="117" r="4" fill="#19466B"/>
+    <circle cx="132" cy="68" r="4" fill="#19466B"/>
+    
+    <!-- Additional circuit elements -->
+    <circle cx="75" cy="98" r="4" fill="#19466B"/>
+    <circle cx="94" cy="87" r="4" fill="#19466B"/>
+    <circle cx="113" cy="75" r="4" fill="#19466B"/>
+    
+    <!-- Circuit connections -->
+    <path d="M64 98 C68 105, 71 105, 75 98" stroke="#19466B" stroke-width="3" fill="none"/>
+    <path d="M75 98 C83 105, 87 94, 94 87" stroke="#19466B" stroke-width="3" fill="none"/>
+    <path d="M94 87 C101 79, 105 83, 113 75" stroke="#19466B" stroke-width="3" fill="none"/>
+    <path d="M113 75 C120 71, 124 71, 132 68" stroke="#19466B" stroke-width="3" fill="none"/>
+
+    <!-- Additional square node from left edge -->
+    <rect x="53" y="87" width="8" height="8" rx="2" fill="#19466B"/>
+    <path d="M61 91 C 62 91, 62 98, 64 98" stroke="#19466B" stroke-width="3" fill="none"/>
+  </g>
+</svg>

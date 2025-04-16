@@ -1,0 +1,72 @@
+{
+  "name": "TSK Platform",
+  "short_name": "TSK",
+  "description": "A decentralized platform for $TSK token mining, marketplace, and more",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#19466B",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/app-icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/app-icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-taskium-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/maskable-taskium-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/taskium-icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Start Mining",
+      "short_name": "Mine",
+      "description": "Start mining TSK tokens",
+      "url": "/mining",
+      "icons": [{ "src": "/icons/mining-icon.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Marketplace",
+      "short_name": "Market",
+      "description": "Browse TSK marketplace",
+      "url": "/marketplace",
+      "icons": [{ "src": "/icons/marketplace-icon.svg", "sizes": "192x192" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "screenshots": [
+    {
+      "src": "/screenshots/dashboard-1.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/screenshots/mining-1.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg"
+    }
+  ]
+}

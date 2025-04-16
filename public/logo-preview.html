@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo Preview</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 30px;
+        }
+        .preview-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+        .logo-container {
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+        .logo {
+            max-width: 250px;
+            height: auto;
+        }
+        .background-white {
+            background-color: white;
+            border: 1px solid #eee;
+        }
+        .background-light {
+            background-color: #f0f7ff;
+            border: 1px solid #d0e0ff;
+        }
+        .background-dark {
+            background-color: #19466B;
+            color: white;
+            border: 1px solid #0a3050;
+        }
+        .background-black {
+            background-color: black;
+            color: white;
+            border: 1px solid #333;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            text-align: left;
+        }
+        .size-control {
+            margin-bottom: 15px;
+        }
+        input[type="range"] {
+            width: 100%;
+            max-width: 400px;
+        }
+        .api-result {
+            margin-top: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        .button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .color-picker {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .color-picker label {
+            margin-right: 10px;
+            min-width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Custom Logo Preview</h1>
+    
+    <div class="controls">
+        <div class="size-control">
+            <label for="logoSize">Logo Size: <span id="sizeValue">250</span>px</label><br>
+            <input type="range" id="logoSize" min="50" max="500" value="250">
+        </div>
+        
+        <div class="color-picker">
+            <label for="logoColor">Logo Color:</label>
+            <input type="color" id="logoColor" value="#19466B">
+            <button class="button" id="updateColor" style="margin-left: 10px;">Update Color</button>
+        </div>
+        
+        <button class="button" id="fetchSettings">Fetch Current Branding Settings</button>
+    </div>
+    
+    <div class="preview-container">
+        <div class="logo-container background-white">
+            <h3>White Background</h3>
+            <img src="/icons/custom-checkmark-logo.svg" alt="Logo" class="logo" id="logoPreview">
+        </div>
+        
+        <div class="logo-container background-light">
+            <h3>Light Background</h3>
+            <img src="/icons/custom-checkmark-logo.svg" alt="Logo" class="logo">
+        </div>
+        
+        <div class="logo-container background-dark">
+            <h3>Dark Background</h3>
+            <img src="/icons/custom-checkmark-logo.svg" alt="Logo" class="logo">
+        </div>
+        
+        <div class="logo-container background-black">
+            <h3>Black Background</h3>
+            <img src="/icons/custom-checkmark-logo.svg" alt="Logo" class="logo">
+        </div>
+    </div>
+    
+    <div class="api-result" id="apiResult" style="display: none;">
+        <h3>API Result:</h3>
+        <pre id="apiResultContent"></pre>
+    </div>
+    
+    <script>
+        // Update logo size based on slider
+        const logoSizeSlider = document.getElementById('logoSize');
+        const sizeValue = document.getElementById('sizeValue');
+        const logoElements = document.querySelectorAll('.logo');
+        
+        logoSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            sizeValue.textContent = size;
+            
+            logoElements.forEach(logo => {
+                logo.style.width = `${size}px`;
+            });
+        });
+        
+        // Update logo color
+        document.getElementById('updateColor').addEventListener('click', function() {
+            const colorValue = document.getElementById('logoColor').value;
+            updateLogoColor(colorValue);
+        });
+        
+        // Fetch logo svg and update its color
+        async function updateLogoColor(color) {
+            try {
+                const response = await fetch('/icons/custom-checkmark-logo.svg');
+                const svgText = await response.text();
+                
+                // Replace all color instances in the SVG
+                const updatedSvg = svgText.replace(/#19466B/g, color);
+                
+                // Create a blob from the updated SVG
+                const blob = new Blob([updatedSvg], {type: 'image/svg+xml'});
+                const url = URL.createObjectURL(blob);
+                
+                // Update all logo images
+                logoElements.forEach(logo => {
+                    logo.src = url;
+                });
+                
+                showApiResult({
+                    success: true,
+                    message: 'Logo color updated successfully',
+                    color: color
+                });
+            } catch (error) {
+                console.error('Error updating logo color:', error);
+                showApiResult({
+                    success: false,
+                    error: error.message
+                });
+            }
+        }
+        
+        // Fetch current branding settings
+        document.getElementById('fetchSettings').addEventListener('click', async function() {
+            try {
+                const response = await fetch('/api/admin/branding-settings');
+                const data = await response.json();
+                
+                showApiResult(data);
+            } catch (error) {
+                console.error('Error fetching branding settings:', error);
+                showApiResult({
+                    success: false,
+                    error: error.message
+                });
+            }
+        });
+        
+        // Helper to display API results
+        function showApiResult(data) {
+            const apiResult = document.getElementById('apiResult');
+            const apiResultContent = document.getElementById('apiResultContent');
+            
+            apiResult.style.display = 'block';
+            apiResultContent.textContent = JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Taskium Mobile App</title>
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background-color: #f0f2f5;
+      color: #333;
+      line-height: 1.5;
+    }
+    
+    /* Header */
+    .header {
+      background: #8c52ff;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .logo-container {
+      margin-bottom: 15px;
+    }
+    .logo {
+      width: 120px;
+      height: auto;
+    }
+    .title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .subtitle {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+    
+    /* Features */
+    .features {
+      padding: 20px;
+    }
+    .feature-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+    .feature-icon {
+      width: 50px;
+      height: 50px;
+      background: #f5f0ff;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 15px;
+    }
+    .feature-icon svg {
+      width: 30px;
+      height: 30px;
+      color: #8c52ff;
+    }
+    .feature-content h3 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+    .feature-content p {
+      font-size: 14px;
+      color: #666;
+    }
+    
+    /* Buttons */
+    .button-container {
+      padding: 0 20px 30px;
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      flex: 1;
+      padding: 15px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .btn-primary {
+      background: #8c52ff;
+      color: white;
+    }
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+    
+    /* Debug info */
+    .debug-container {
+      padding: 20px;
+      margin-top: 20px;
+      background: #f8f8f8;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
+    .debug-container h3 {
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .debug-info {
+      font-family: monospace;
+      font-size: 12px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #eee;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin-bottom: 10px;
+    }
+    .logo-variants {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .logo-variant {
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      text-align: center;
+      background: white;
+    }
+    .logo-variant.purple {
+      background: #8c52ff;
+    }
+    .logo-path {
+      font-size: 10px;
+      margin-top: 5px;
+      font-family: monospace;
+      color: #666;
+    }
+    
+    /* Logo error handler */
+    .logo-error {
+      font-size: 14px;
+      color: #d32f2f;
+      margin-top: 5px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with Logo -->
+  <header class="header">
+    <div class="logo-container">
+      <img src="/taskium-logo.svg" alt="Taskium Logo" class="logo" id="mainLogo" onerror="handleLogoError()">
+      <div class="logo-error" id="logoError">Logo failed to load. Using text fallback.</div>
+    </div>
+    <h1 class="title">Welcome to Taskium</h1>
+    <p class="subtitle">Mint tokens, refer friends, and trade in the marketplace.</p>
+  </header>
+  
+  <!-- Main Features -->
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      </div>
+      <div class="feature-content">
+        <h3>Daily Mining</h3>
+        <p>Mine tokens once per day with just a click</p>
+      </div>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+      </div>
+      <div class="feature-content">
+        <h3>Referral Program</h3>
+        <p>Invite friends and boost your mining rate</p>
+      </div>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+      </div>
+      <div class="feature-content">
+        <h3>Marketplace</h3>
+        <p>Buy and sell products using your mined tokens</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Action Buttons -->
+  <div class="button-container">
+    <button class="btn btn-primary" id="loginButton">Login</button>
+    <button class="btn btn-secondary" id="registerButton">Register</button>
+  </div>
+  
+  <!-- Debug Info Section -->
+  <div class="debug-container">
+    <h3>Logo Debug Information</h3>
+    <div class="debug-info" id="debugInfo">Loading logo information...</div>
+    
+    <h3>Logo Variants</h3>
+    <div class="logo-variants">
+      <div class="logo-variant purple">
+        <img src="/mobile-logo.svg" alt="White Logo" style="width: 80px; height: auto;">
+        <div class="logo-path">/mobile-logo.svg</div>
+      </div>
+      
+      <div class="logo-variant">
+        <img src="/taskium-logo.svg" alt="Taskium Logo" style="width: 80px; height: auto;">
+        <div class="logo-path">/taskium-logo.svg</div>
+      </div>
+      
+      <div class="logo-variant">
+        <img src="/icons/taskium-logo.svg" alt="Taskium Logo (Icons)" style="width: 80px; height: auto;">
+        <div class="logo-path">/icons/taskium-logo.svg</div>
+      </div>
+      
+      <div class="logo-variant">
+        <img src="/icons/custom-checkmark-logo.svg" alt="Custom Logo" style="width: 80px; height: auto;">
+        <div class="logo-path">/icons/custom-checkmark-logo.svg</div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      updateDebugInfo();
+      
+      // Button actions
+      document.getElementById('loginButton').addEventListener('click', function() {
+        alert('Login button clicked');
+      });
+      
+      document.getElementById('registerButton').addEventListener('click', function() {
+        alert('Register button clicked');
+      });
+    });
+    
+    // Handle logo error
+    function handleLogoError() {
+      var logoElement = document.getElementById('mainLogo');
+      var errorElement = document.getElementById('logoError');
+      
+      // Try these alternatives in sequence
+      var alternativeLogos = [
+        '/mobile-logo.svg',
+        '/icons/taskium-logo.svg',
+        '/icons/custom-checkmark-logo.svg'
+      ];
+      
+      var currentIndex = 0;
+      var originalSrc = logoElement.src;
+      
+      function tryNextLogo() {
+        if (currentIndex < alternativeLogos.length) {
+          logoElement.src = alternativeLogos[currentIndex];
+          currentIndex++;
+          console.log('Trying logo: ' + logoElement.src);
+          updateDebugInfo('Trying alternative logo: ' + logoElement.src);
+        } else {
+          // If all alternatives fail, show text instead
+          errorElement.style.display = 'block';
+          logoElement.style.display = 'none';
+          updateDebugInfo('All logo variants failed. Using text fallback.');
+        }
+      }
+      
+      // Set up error handler for subsequent attempts
+      logoElement.onerror = function() {
+        console.log('Logo failed to load: ' + logoElement.src);
+        updateDebugInfo('Logo failed to load: ' + logoElement.src);
+        tryNextLogo();
+      };
+      
+      // Log the original error
+      updateDebugInfo('Original logo failed to load: ' + originalSrc);
+      
+      // Try the first alternative
+      tryNextLogo();
+    }
+    
+    // Update debug info
+    function updateDebugInfo(message) {
+      var debugInfo = document.getElementById('debugInfo');
+      var currentDate = new Date();
+      var timestamp = currentDate.toLocaleTimeString();
+      
+      if (message) {
+        if (debugInfo.innerHTML === 'Loading logo information...') {
+          debugInfo.innerHTML = '';
+        }
+        debugInfo.innerHTML += `[${timestamp}] ${message}\n`;
+      } else {
+        var logoData = {
+          'Main Logo Path': document.getElementById('mainLogo').src,
+          'Window Location': window.location.href,
+          'User Agent': navigator.userAgent,
+          'Screen Width': window.innerWidth + 'px',
+          'Screen Height': window.innerHeight + 'px',
+          'Device Pixel Ratio': window.devicePixelRatio
+        };
+        
+        var infoText = Object.keys(logoData).map(key => 
+          `${key}: ${logoData[key]}`
+        ).join('\n');
+        
+        debugInfo.textContent = infoText;
+      }
+    }
+  </script>
+</body>
+</html>

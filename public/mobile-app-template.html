@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taskium Mobile App</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: white;
+      background-color: #8c52ff;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .logo {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 20px;
+      object-fit: contain;
+    }
+    h1 {
+      font-size: 28px;
+      margin: 0 0 10px 0;
+    }
+    p {
+      font-size: 16px;
+      margin: 0 0 30px 0;
+      opacity: 0.9;
+    }
+    .features {
+      width: 100%;
+      max-width: 400px;
+    }
+    .feature {
+      background-color: rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+    }
+    .feature h2 {
+      font-size: 18px;
+      margin: 0 0 8px 0;
+    }
+    .feature p {
+      font-size: 14px;
+      margin: 0;
+    }
+    /* Fix for logo display issues */
+    .logo-fallback {
+      display: none;
+      width: 120px;
+      height: 120px;
+      margin-bottom: 20px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 60px;
+      position: relative;
+    }
+    .logo-fallback:after {
+      content: "";
+      position: absolute;
+      top: 30px;
+      left: 30px;
+      width: 60px;
+      height: 60px;
+      border: 6px solid white;
+      border-radius: 50%;
+    }
+    .logo-fallback:before {
+      content: "✓";
+      position: absolute;
+      top: 30px;
+      left: 44px;
+      font-size: 50px;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Logo with multiple fallbacks -->
+    <img src="/mobile-logo.svg" alt="Taskium Logo" class="logo" id="appLogo" onerror="handleLogoError()">
+    <div class="logo-fallback" id="logoFallback"></div>
+    
+    <h1>Welcome to Taskium</h1>
+    <p>Mint tokens, refer friends, and trade in the marketplace.</p>
+    
+    <div class="features">
+      <div class="feature">
+        <h2>Daily Mining</h2>
+        <p>Mine tokens once per day with just a click</p>
+      </div>
+      
+      <div class="feature">
+        <h2>Referral Program</h2>
+        <p>Invite friends and boost your mining rate</p>
+      </div>
+      
+      <div class="feature">
+        <h2>Marketplace</h2>
+        <p>Buy and sell products using your mined tokens</p>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Function to handle logo loading errors
+    function handleLogoError() {
+      console.log('Logo failed to load, trying alternatives...');
+      
+      // Define all possible logo paths
+      const logoPaths = [
+        '/taskium-logo.svg',
+        '/icons/taskium-logo.svg',
+        '/icons/custom-checkmark-logo.svg',
+        '/icons/mobile/logo-white.png'
+      ];
+      
+      const logoElement = document.getElementById('appLogo');
+      let currentPathIndex = 0;
+      
+      // Try loading the next logo in the list
+      function tryNextLogo() {
+        if (currentPathIndex < logoPaths.length) {
+          const nextPath = logoPaths[currentPathIndex];
+          console.log(`Trying logo at: ${nextPath}`);
+          logoElement.src = nextPath;
+          currentPathIndex++;
+        } else {
+          // If all logos fail, show the CSS fallback
+          console.log('All logo files failed, using CSS fallback');
+          logoElement.style.display = 'none';
+          document.getElementById('logoFallback').style.display = 'block';
+        }
+      }
+      
+      // Handle errors for alternative logos
+      logoElement.onerror = function() {
+        tryNextLogo();
+      };
+      
+      // Start trying alternatives
+      tryNextLogo();
+    }
+    
+    // Create a data URI SVG as an absolute last resort
+    function createInlineSVG() {
+      const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 512 512">
+        <circle cx="256" cy="256" r="240" stroke="white" stroke-width="32" fill="transparent"/>
+        <path d="M335 170 L230 320 L170 250" stroke="white" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>`;
+      
+      return 'data:image/svg+xml;base64,' + btoa(svgStr);
+    }
+    
+    // Handle case where first logo loads successfully
+    document.getElementById('appLogo').onload = function() {
+      console.log('Logo loaded successfully');
+    };
+    
+    // Make the built-in SVG available as a last resort
+    window.getInlineSVG = createInlineSVG;
+  </script>
+</body>
+</html>

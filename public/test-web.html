@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Web Connectivity Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .result {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .success {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+    .error {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+    button {
+      margin-top: 10px;
+      padding: 8px 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Web Server Connectivity Test</h1>
+  
+  <div>
+    <h2>Test Standard Endpoint</h2>
+    <button onclick="testEndpoint('/test-web-endpoint')">Test Web Endpoint</button>
+    <div id="endpoint-result" class="result"></div>
+  </div>
+  
+  <div>
+    <h2>Test API Endpoint</h2>
+    <button onclick="testEndpoint('/api/user')">Test API</button>
+    <div id="api-result" class="result"></div>
+  </div>
+  
+  <div>
+    <h2>Test Root Endpoint</h2>
+    <button onclick="testEndpoint('/')">Test Root</button>
+    <div id="root-result" class="result"></div>
+  </div>
+
+  <script>
+    function testEndpoint(url) {
+      const resultId = url === '/test-web-endpoint' ? 'endpoint-result' : 
+                       url === '/api/user' ? 'api-result' : 'root-result';
+      
+      const resultElement = document.getElementById(resultId);
+      resultElement.textContent = 'Testing...';
+      resultElement.className = 'result';
+      
+      fetch(url)
+        .then(response => {
+          const status = response.status;
+          const messageByEndpoint = {
+            '/test-web-endpoint': status === 200 ? 'Success: Web server endpoint is accessible' : `Error: Unexpected status ${status}`,
+            '/api/user': status === 401 ? 'Success: API endpoint returned 401 (expected for unauthenticated access)' : `Unexpected status ${status}`,
+            '/': status === 200 ? 'Success: Root endpoint is accessible' : `Error: Unexpected status ${status}`
+          };
+          
+          const message = messageByEndpoint[url] || `Response status: ${status}`;
+          
+          resultElement.textContent = message;
+          resultElement.className = 'result ' + (message.includes('Success') ? 'success' : 'error');
+          
+          if (url === '/test-web-endpoint' && status === 200) {
+            return response.text().then(html => {
+              resultElement.innerHTML += '<br><br>Content preview:<br><pre>' + 
+                html.substring(0, 100).replace(/</g, '&lt;').replace(/>/g, '&gt;') + 
+                '...</pre>';
+            });
+          }
+          
+          if (url === '/api/user') {
+            return response.json().catch(e => ({ error: 'Could not parse JSON response' }))
+              .then(data => {
+                resultElement.innerHTML += '<br><br>Response data:<br><pre>' + 
+                  JSON.stringify(data, null, 2) + '</pre>';
+              });
+          }
+        })
+        .catch(error => {
+          resultElement.textContent = `Connection error: ${error.message}`;
+          resultElement.className = 'result error';
+        });
+    }
+  </script>
+</body>
+</html>

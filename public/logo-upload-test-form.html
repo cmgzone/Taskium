@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logo Upload Test Form</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #19466B;
+      margin-bottom: 20px;
+    }
+    h2 {
+      color: #8c52ff;
+      margin-top: 30px;
+    }
+    .upload-form {
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: #f9f9fa;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: white;
+    }
+    button {
+      background-color: #19466B;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #0f2b40;
+    }
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+    }
+    .success {
+      background-color: #d4edda;
+      border-left: 4px solid #28a745;
+    }
+    .error {
+      background-color: #f8d7da;
+      border-left: 4px solid #dc3545;
+    }
+    .info {
+      background-color: #e7f5ff;
+      border-left: 4px solid #74c0fc;
+    }
+    code {
+      background-color: #f1f1f1;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    .demo-logo {
+      max-width: 200px;
+      height: auto;
+      margin: 20px 0;
+      border: 1px solid #ddd;
+      padding: 10px;
+      background-color: white;
+    }
+    .result-area {
+      margin-top: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      background-color: white;
+    }
+    .logo-display {
+      max-width: 200px;
+      margin: 20px auto;
+      display: block;
+    }
+    .log-area {
+      background-color: #2b2b2b;
+      color: #eee;
+      padding: 15px;
+      border-radius: 5px;
+      font-family: monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-top: 20px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      height: 200px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Logo Upload Test Form</h1>
+  <p>Use this form to test the logo upload functionality. The form will upload a logo file and update the branding settings automatically.</p>
+  
+  <div class="upload-form">
+    <h2>Upload Logo</h2>
+    <div class="form-group">
+      <label for="logoFile">Select Logo File (PNG, JPG, or SVG, max 2MB)</label>
+      <input type="file" id="logoFile" accept=".png,.jpg,.jpeg,.svg" />
+    </div>
+    <button id="uploadButton">Upload Logo</button>
+    <div id="status" class="status" style="display: none;"></div>
+  </div>
+  
+  <h2>Upload Test Options</h2>
+  <div class="upload-form">
+    <div class="form-group">
+      <label for="uploadEndpoint">Upload Endpoint</label>
+      <select id="uploadEndpoint">
+        <option value="/api/direct-logo-upload">Direct Logo Upload (/api/direct-logo-upload)</option>
+        <option value="/api/admin/branding-settings/logo-upload">Admin Logo Upload (/api/admin/branding-settings/logo-upload)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>
+        <input type="checkbox" id="updateBranding" checked /> 
+        Update Branding Settings After Upload
+      </label>
+    </div>
+  </div>
+  
+  <div class="result-area" id="resultArea" style="display: none;">
+    <h2>Upload Result</h2>
+    <img id="uploadedLogo" class="logo-display" />
+    <div>
+      <p><strong>Logo URL:</strong> <span id="logoUrl"></span></p>
+      <p><strong>Alternative URLs:</strong></p>
+      <ul id="alternativeUrls"></ul>
+    </div>
+  </div>
+  
+  <h2>Debug Console</h2>
+  <div class="log-area" id="logArea"></div>
+  
+  <script>
+    // Log function with timestamp
+    function log(message, type = 'info') {
+      const logArea = document.getElementById('logArea');
+      const now = new Date();
+      const timestamp = now.toLocaleTimeString('en-US', { hour12: false });
+      
+      let style = '';
+      if (type === 'error') style = 'color: #ff6b6b;';
+      if (type === 'success') style = 'color: #69db7c;';
+      
+      logArea.innerHTML += `<div style="${style}">[${timestamp}] ${message}</div>`;
+      logArea.scrollTop = logArea.scrollHeight;
+    }
+
+    // Set up status display
+    function showStatus(message, type) {
+      const statusElement = document.getElementById('status');
+      statusElement.textContent = message;
+      statusElement.className = `status ${type}`;
+      statusElement.style.display = 'block';
+    }
+
+    // Handle file upload
+    document.getElementById('uploadButton').addEventListener('click', async () => {
+      const fileInput = document.getElementById('logoFile');
+      const endpoint = document.getElementById('uploadEndpoint').value;
+      const updateBranding = document.getElementById('updateBranding').checked;
+      
+      if (!fileInput.files || !fileInput.files[0]) {
+        showStatus('Please select a file to upload', 'error');
+        log('Error: No file selected', 'error');
+        return;
+      }
+      
+      const file = fileInput.files[0];
+      log(`Selected file: ${file.name} (${file.type}, ${Math.round(file.size / 1024)}KB)`);
+      
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml', 'image/svg'];
+      if (!validTypes.includes(file.type) && !file.name.toLowerCase().endsWith('.svg')) {
+        showStatus('Invalid file type. Please select a PNG, JPG, or SVG file.', 'error');
+        log(`Error: Invalid file type ${file.type}`, 'error');
+        return;
+      }
+      
+      // Validate file size (2MB)
+      const maxSize = 2 * 1024 * 1024; // 2MB
+      if (file.size > maxSize) {
+        showStatus('File is too large. Maximum size is 2MB.', 'error');
+        log(`Error: File too large (${Math.round(file.size / 1024)}KB)`, 'error');
+        return;
+      }
+      
+      // Create FormData and append file
+      const formData = new FormData();
+      formData.append('logo', file);
+      
+      log(`Uploading file to ${endpoint}...`);
+      showStatus('Uploading...', 'info');
+      
+      try {
+        // Upload file
+        const uploadResponse = await fetch(endpoint, {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!uploadResponse.ok) {
+          const errorText = await uploadResponse.text();
+          throw new Error(`Upload failed with status ${uploadResponse.status}: ${errorText}`);
+        }
+        
+        const uploadResult = await uploadResponse.json();
+        log(`Upload successful: ${JSON.stringify(uploadResult, null, 2)}`, 'success');
+        
+        // Update UI with result
+        document.getElementById('resultArea').style.display = 'block';
+        document.getElementById('logoUrl').textContent = uploadResult.logoUrl;
+        document.getElementById('uploadedLogo').src = uploadResult.logoUrl;
+        
+        const altUrlsList = document.getElementById('alternativeUrls');
+        altUrlsList.innerHTML = '';
+        if (uploadResult.alternativeUrls) {
+          uploadResult.alternativeUrls.forEach(url => {
+            const li = document.createElement('li');
+            li.textContent = url;
+            altUrlsList.appendChild(li);
+          });
+        }
+        
+        // Update branding settings if checkbox is checked
+        if (updateBranding) {
+          log('Updating branding settings...');
+          try {
+            const brandingResponse = await fetch('/api/direct-branding-settings', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                siteName: 'TSK Platform',
+                siteTagline: 'The Future of AI Knowledge Management',
+                logoUrl: uploadResult.logoUrl,
+                logoType: 'custom',
+                primaryColor: '#19466B',
+                enableCustomBranding: true
+              })
+            });
+            
+            if (!brandingResponse.ok) {
+              const errorText = await brandingResponse.text();
+              throw new Error(`Branding update failed: ${errorText}`);
+            }
+            
+            const brandingResult = await brandingResponse.json();
+            log(`Branding settings updated: ${JSON.stringify(brandingResult)}`, 'success');
+            showStatus('Logo uploaded and branding settings updated successfully!', 'success');
+          } catch (brandingError) {
+            log(`Error updating branding settings: ${brandingError.message}`, 'error');
+            showStatus(`Logo uploaded but branding settings update failed: ${brandingError.message}`, 'error');
+          }
+        } else {
+          showStatus('Logo uploaded successfully!', 'success');
+        }
+      } catch (error) {
+        log(`Error: ${error.message}`, 'error');
+        showStatus(`Upload failed: ${error.message}`, 'error');
+      }
+    });
+    
+    // Initialize with a log message
+    log('Logo upload test form initialized. Select a logo file to begin.');
+  </script>
+</body>
+</html>

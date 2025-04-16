@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Embedded Taskium Logo</title>
+  <style>
+    body {
+      background-color: #8c52ff;
+      color: white;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    h1 {
+      margin-top: 20px;
+      font-size: 24px;
+    }
+    p {
+      margin-top: 10px;
+      opacity: 0.8;
+    }
+    .logo-container {
+      width: 150px;
+      height: 150px;
+    }
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo-container">
+    <!-- Embedded SVG logo for maximum compatibility -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+      <!-- Outer circle with white stroke -->
+      <circle cx="256" cy="256" r="240" stroke="white" stroke-width="32" fill="transparent"/>
+      
+      <!-- Main checkmark inside circle -->
+      <path d="M335 170 L230 320 L170 250" stroke="white" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" fill="transparent"/>
+      
+      <!-- Partial checkmark/bracket shape on left -->
+      <path d="M210 320 C210 320 185 310 180 285 C175 260 190 240 200 230" stroke="white" stroke-width="25" stroke-linecap="round" fill="transparent"/>
+      
+      <!-- Dot at top of bracket -->
+      <circle cx="205" cy="225" r="12" fill="white"/>
+      
+      <!-- Dot at bottom of bracket -->
+      <circle cx="180" cy="285" r="12" fill="white"/>
+    </svg>
+  </div>
+  
+  <h1>Welcome to Taskium</h1>
+  <p>Mint tokens, refer friends, and trade in the marketplace.</p>
+  
+  <script>
+    // Copy this embedded SVG code directly into your mobile app's HTML template
+    // to ensure the logo always displays correctly
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Embedded SVG logo loaded');
+    });
+  </script>
+</body>
+</html>

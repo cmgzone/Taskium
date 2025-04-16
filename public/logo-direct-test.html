@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo Direct Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f7f7f7;
+        }
+        h1, h2 {
+            color: #19466B;
+        }
+        .test-section {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .logo-box {
+            padding: 20px;
+            background-color: #19466B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .logo-box img {
+            max-height: 60px;
+        }
+        .status {
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        .test-item {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <h1>Logo Direct Test</h1>
+    <p>This simple page tests direct access to the logo file at various paths.</p>
+    
+    <div class="test-section">
+        <h2>Direct Testing</h2>
+        
+        <div class="test-item">
+            <h3>Test 1: Relative Path (/icons/custom-checkmark-logo.svg)</h3>
+            <div class="logo-box">
+                <img src="/icons/custom-checkmark-logo.svg" alt="Logo Test 1" id="test1" />
+            </div>
+            <div>Status: <span id="status1" class="status">Checking...</span></div>
+        </div>
+        
+        <div class="test-item">
+            <h3>Test 2: Absolute Path (including protocol and host)</h3>
+            <div class="logo-box">
+                <img id="test2" alt="Logo Test 2" />
+            </div>
+            <div>Status: <span id="status2" class="status">Checking...</span></div>
+        </div>
+        
+        <div class="test-item">
+            <h3>Test 3: Public Directory Path (with /public prefix)</h3>
+            <div class="logo-box">
+                <img src="/public/icons/custom-checkmark-logo.svg" alt="Logo Test 3" id="test3" />
+            </div>
+            <div>Status: <span id="status3" class="status">Checking...</span></div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Logo File Information</h2>
+        <button id="checkBtn">Check File Info</button>
+        <div id="fileInfo">Click the button to check...</div>
+    </div>
+    
+    <script>
+        // Set absolute URL for test 2
+        const test2Img = document.getElementById('test2');
+        const currentLocation = window.location.href.split('/').slice(0, 3).join('/');
+        test2Img.src = `${currentLocation}/icons/custom-checkmark-logo.svg`;
+        
+        // Status elements
+        const status1 = document.getElementById('status1');
+        const status2 = document.getElementById('status2');
+        const status3 = document.getElementById('status3');
+        
+        // Test elements
+        const test1Img = document.getElementById('test1');
+        const test3Img = document.getElementById('test3');
+        
+        // Image load/error handlers
+        test1Img.onload = function() {
+            status1.textContent = 'Loaded successfully!';
+            status1.className = 'status success';
+        };
+        
+        test1Img.onerror = function() {
+            status1.textContent = 'Failed to load';
+            status1.className = 'status error';
+        };
+        
+        test2Img.onload = function() {
+            status2.textContent = 'Loaded successfully!';
+            status2.className = 'status success';
+        };
+        
+        test2Img.onerror = function() {
+            status2.textContent = 'Failed to load';
+            status2.className = 'status error';
+        };
+        
+        test3Img.onload = function() {
+            status3.textContent = 'Loaded successfully!';
+            status3.className = 'status success';
+        };
+        
+        test3Img.onerror = function() {
+            status3.textContent = 'Failed to load';
+            status3.className = 'status error';
+        };
+        
+        // File info check
+        document.getElementById('checkBtn').addEventListener('click', async function() {
+            const fileInfo = document.getElementById('fileInfo');
+            fileInfo.innerHTML = 'Checking file info...';
+            
+            try {
+                // Try a HEAD request first
+                const headResponse = await fetch('/icons/custom-checkmark-logo.svg', { method: 'HEAD' });
+                
+                if (headResponse.ok) {
+                    // Get content type
+                    const contentType = headResponse.headers.get('Content-Type');
+                    
+                    // Try a GET request to get the file size
+                    const getResponse = await fetch('/icons/custom-checkmark-logo.svg');
+                    const blob = await getResponse.blob();
+                    
+                    fileInfo.innerHTML = `
+                        <p><strong>Status:</strong> File exists</p>
+                        <p><strong>Content Type:</strong> ${contentType || 'Unknown'}</p>
+                        <p><strong>File Size:</strong> ${formatBytes(blob.size)}</p>
+                        <p><strong>URL:</strong> ${headResponse.url}</p>
+                    `;
+                } else {
+                    fileInfo.innerHTML = `<p class="error">File exists but returned HTTP status: ${headResponse.status}</p>`;
+                }
+            } catch (error) {
+                fileInfo.innerHTML = `<p class="error">Error accessing file: ${error.message}</p>`;
+            }
+        });
+        
+        // Helper function to format bytes
+        function formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>

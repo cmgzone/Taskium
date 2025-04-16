@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TSK Platform</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" href="/favicon.ico">
+  
+  <!-- Web App Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#19466B">
+  
+  <!-- iOS PWA Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="/app-icon-192.svg">
+  
+  <!-- Description and Open Graph tags -->
+  <meta name="description" content="TSK Platform - Future of decentralised economy">
+  <meta property="og:title" content="TSK Platform">
+  <meta property="og:description" content="TSK Platform - Future of decentralised economy">
+  <meta property="og:type" content="website">
+  
+  <!-- Firebase -->
+  <script defer src="/__/firebase/9.19.1/firebase-app-compat.js"></script>
+  <script defer src="/__/firebase/9.19.1/firebase-auth-compat.js"></script>
+  <script defer src="/__/firebase/9.19.1/firebase-firestore-compat.js"></script>
+  <script defer src="/__/firebase/9.19.1/firebase-storage-compat.js"></script>
+  <script defer src="/__/firebase/9.19.1/firebase-functions-compat.js"></script>
+  <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  
+  <!-- This is where your bundled JavaScript will be injected -->
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Server Connection Test</title>
+</head>
+<body>
+  <h1>Testing Server Connection</h1>
+  <div id="result">Checking connection...</div>
+
+  <script>
+    // Test connection to the backend
+    fetch('/api/user')
+      .then(response => {
+        if (response.status === 401) {
+          document.getElementById('result').innerHTML = 'Connection successful! API returned 401 Unauthorized (expected)';
+        } else {
+          document.getElementById('result').innerHTML = 'Connection successful! API response status: ' + response.status;
+        }
+      })
+      .catch(error => {
+        document.getElementById('result').innerHTML = 'Connection failed: ' + error.message;
+      });
+  </script>
+</body>
+</html>

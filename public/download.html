@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TSK Platform - Download</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f8fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            flex: 1;
+        }
+        header {
+            background-color: #1a5fb4;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        p {
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .download-btn {
+            display: inline-block;
+            background-color: #1a5fb4;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px auto;
+            transition: background-color 0.3s ease;
+        }
+        .download-btn:hover {
+            background-color: #104d92;
+        }
+        .download-section {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .footer {
+            background-color: #333;
+            color: #f5f5f5;
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin: 30px 0;
+        }
+        .feature {
+            flex-basis: 48%;
+            margin-bottom: 20px;
+        }
+        .feature h3 {
+            color: #1a5fb4;
+            margin-bottom: 10px;
+        }
+        @media (max-width: 600px) {
+            .feature {
+                flex-basis: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">TSK Platform</div>
+    </header>
+    
+    <div class="container">
+        <h1>Download the TSK Platform</h1>
+        
+        <div class="card">
+            <p>The TSK Platform is a comprehensive decentralized application that combines blockchain functionality with a modern web interface. This download package contains everything you need to deploy the platform on your own server.</p>
+            
+            <div class="features">
+                <div class="feature">
+                    <h3>📱 Cross-Platform</h3>
+                    <p>Web application and Android mobile app for maximum accessibility</p>
+                </div>
+                <div class="feature">
+                    <h3>💰 Token Economy</h3>
+                    <p>Built-in token mining and marketplace functionality</p>
+                </div>
+                <div class="feature">
+                    <h3>👥 User Management</h3>
+                    <p>Complete user registration, authentication, and referral system</p>
+                </div>
+                <div class="feature">
+                    <h3>⚙️ Admin Controls</h3>
+                    <p>Comprehensive admin dashboard for platform management</p>
+                </div>
+            </div>
+            
+            <div class="download-section">
+                <a href="/api/download-project" class="download-btn">Download Project Files (ZIP)</a>
+                <p>File size: Approximately 74MB</p>
+            </div>
+            
+            <p><strong>Need admin access?</strong> Use the following credentials to log in:</p>
+            <p>Username: <code>admin2</code><br>Password: <code>admin123</code></p>
+        </div>
+        
+        <div class="card">
+            <h3>Installation Instructions</h3>
+            <p>After downloading the project files:</p>
+            <ol>
+                <li>Extract the ZIP file to your preferred location</li>
+                <li>Navigate to the project directory and run <code>npm install</code></li>
+                <li>Configure your environment variables in a <code>.env</code> file based on the provided <code>.env.example</code></li>
+                <li>Set up a PostgreSQL database and update the connection string in your <code>.env</code> file</li>
+                <li>Run <code>npm run db:push</code> to set up the database schema</li>
+                <li>Start the application with <code>npm run dev</code> (development) or <code>npm run start</code> (production)</li>
+            </ol>
+            <p>For detailed deployment instructions, refer to the documentation files included in the package.</p>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <p>© 2025 TSK Platform. All rights reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobile Logo Loader</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #8c52ff; /* Match the app's purple background */
+    }
+    img {
+      max-width: 80%;
+      max-height: 80%;
+    }
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .info {
+      color: white;
+      font-family: sans-serif;
+      margin-top: 20px;
+      text-align: center;
+      max-width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo-container">
+    <img src="/mobile-logo.svg" id="logoImage" alt="Taskium Logo" onerror="handleImageError()">
+    <div class="info">
+      This logo should display in mobile environments where SVG is supported. If not, it will fallback to PNG.
+    </div>
+  </div>
+
+  <script>
+    // Create an object URL for a simple white checkmark SVG
+    function createInlineSVG() {
+      const svgContent = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+        <circle cx="256" cy="256" r="240" stroke="white" stroke-width="32" fill="transparent"/>
+        <path d="M335 170 L230 320 L170 250" stroke="white" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" fill="transparent"/>
+        <path d="M210 320 C210 320 185 310 180 285 C175 260 190 240 200 230" stroke="white" stroke-width="25" stroke-linecap="round" fill="transparent"/>
+        <circle cx="205" cy="225" r="12" fill="white"/>
+        <circle cx="180" cy="285" r="12" fill="white"/>
+      </svg>
+      `;
+      
+      const blob = new Blob([svgContent], {type: 'image/svg+xml'});
+      return URL.createObjectURL(blob);
+    }
+
+    function handleImageError() {
+      console.log('SVG logo failed to load, trying fallback options...');
+      
+      // Try these alternatives in sequence
+      const alternativeLogos = [
+        '/taskium-logo.svg',
+        '/icons/taskium-logo.svg',
+        '/icons/custom-checkmark-logo.svg',
+        createInlineSVG() // Create an inline SVG as a last resort
+      ];
+      
+      const logoImg = document.getElementById('logoImage');
+      let currentIndex = 0;
+      
+      function tryNextLogo() {
+        if (currentIndex < alternativeLogos.length) {
+          logoImg.src = alternativeLogos[currentIndex];
+          currentIndex++;
+          console.log('Trying logo: ' + logoImg.src);
+        }
+      }
+      
+      // Set up error handler for subsequent attempts
+      logoImg.onerror = function() {
+        console.log('Logo failed to load: ' + logoImg.src);
+        tryNextLogo();
+      };
+      
+      // Try the first alternative
+      tryNextLogo();
+    }
+
+    // Log success if the logo loads
+    document.getElementById('logoImage').onload = function() {
+      console.log('Logo loaded successfully: ' + this.src);
+    };
+  </script>
+</body>
+</html>

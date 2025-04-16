@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Background for maskable icon (with safe zone) -->
+  <rect width="512" height="512" fill="#e6f2f7"/>
+  
+  <!-- Centered icon (80% of total size) -->
+  <g transform="translate(51.2, 51.2) scale(0.8)">
+    <!-- Circle outline -->
+    <circle cx="256" cy="256" r="200" fill="none" stroke="#19466B" stroke-width="25"/>
+    
+    <!-- Checkmark path with circuit elements -->
+    <path d="M170 260 L220 310 L350 180" stroke="#19466B" stroke-width="25" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    
+    <!-- Circuit dots and connections -->
+    <circle cx="170" cy="260" r="10" fill="#19466B"/>
+    <circle cx="220" cy="310" r="10" fill="#19466B"/>
+    <circle cx="350" cy="180" r="10" fill="#19466B"/>
+    
+    <!-- Additional circuit elements -->
+    <circle cx="200" cy="260" r="10" fill="#19466B"/>
+    <circle cx="250" cy="230" r="10" fill="#19466B"/>
+    <circle cx="300" cy="200" r="10" fill="#19466B"/>
+    
+    <!-- Circuit connections -->
+    <path d="M170 260 C180 280, 190 280, 200 260" stroke="#19466B" stroke-width="8" fill="none"/>
+    <path d="M200 260 C220 280, 230 250, 250 230" stroke="#19466B" stroke-width="8" fill="none"/>
+    <path d="M250 230 C270 210, 280 220, 300 200" stroke="#19466B" stroke-width="8" fill="none"/>
+    <path d="M300 200 C320 190, 330 190, 350 180" stroke="#19466B" stroke-width="8" fill="none"/>
+
+    <!-- Additional square node from left edge -->
+    <rect x="140" y="230" width="20" height="20" rx="4" fill="#19466B"/>
+    <path d="M160 240 C 165 240, 165 260, 170 260" stroke="#19466B" stroke-width="8" fill="none"/>
+  </g>
+</svg>

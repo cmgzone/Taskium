@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1080" height="1920" viewBox="0 0 1080 1920" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg_gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#001A3D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#003366;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Glow effect for text -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="10" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1080" height="1920" fill="url(#bg_gradient)"/>
+  
+  <!-- TSK Logo with glow -->
+  <g filter="url(#glow)" transform="translate(190, 700)">
+    <!-- T -->
+    <path d="M40 50L220 50L220 130L160 130L160 480L100 480L100 130L40 130L40 50Z" fill="#4AA4F6"/>
+    
+    <!-- S -->
+    <path d="M260 50L440 50L440 130L260 130L260 50Z" fill="#4AA4F6"/>
+    <path d="M260 130L320 130L320 220L260 220L260 130Z" fill="#4AA4F6"/>
+    <path d="M260 220L440 220L440 300L260 300L260 220Z" fill="#4AA4F6"/>
+    <path d="M380 300L440 300L440 390L380 390L380 300Z" fill="#4AA4F6"/>
+    <path d="M260 390L440 390L440 480L260 480L260 390Z" fill="#4AA4F6"/>
+    
+    <!-- K -->
+    <path d="M480 50L540 50L540 230L600 130L670 130L580 265L680 480L610 480L540 320L540 480L480 480L480 50Z" fill="#4AA4F6"/>
+  </g>
+  
+  <!-- TASKIUM text -->
+  <text x="540" y="1000" font-family="Arial, sans-serif" font-size="70" font-weight="bold" fill="#4AA4F6" text-anchor="middle" letter-spacing="10">TASKIUM</text>
+  
+  <!-- Tagline -->
+  <text x="540" y="1100" font-family="Arial, sans-serif" font-size="36" fill="#4AA4F6" text-anchor="middle">Fueling the African</text>
+  <text x="540" y="1150" font-family="Arial, sans-serif" font-size="36" fill="#4AA4F6" text-anchor="middle">Digital Economy</text>
+  
+  <!-- Loading spinner -->
+  <g transform="translate(540, 1350)">
+    <!-- Spinner circles -->
+    <circle cx="0" cy="-40" r="10" fill="#4AA4F6" opacity="0.3"/>
+    <circle cx="28" cy="-28" r="10" fill="#4AA4F6" opacity="0.4"/>
+    <circle cx="40" cy="0" r="10" fill="#4AA4F6" opacity="0.5"/>
+    <circle cx="28" cy="28" r="10" fill="#4AA4F6" opacity="0.6"/>
+    <circle cx="0" cy="40" r="10" fill="#4AA4F6" opacity="0.7"/>
+    <circle cx="-28" cy="28" r="10" fill="#4AA4F6" opacity="0.8"/>
+    <circle cx="-40" cy="0" r="10" fill="#4AA4F6" opacity="0.9"/>
+    <circle cx="-28" cy="-28" r="10" fill="#4AA4F6" opacity="1.0"/>
+  </g>
+  
+  <!-- Subtle decorative elements -->
+  <circle cx="200" cy="200" r="3" fill="#4AA4F6" opacity="0.3"/>
+  <circle cx="220" cy="220" r="2" fill="#4AA4F6" opacity="0.3"/>
+  <circle cx="240" cy="240" r="4" fill="#4AA4F6" opacity="0.3"/>
+  
+  <circle cx="880" cy="1720" r="3" fill="#4AA4F6" opacity="0.3"/>
+  <circle cx="860" cy="1700" r="2" fill="#4AA4F6" opacity="0.3"/>
+  <circle cx="840" cy="1680" r="4" fill="#4AA4F6" opacity="0.3"/>
+</svg>

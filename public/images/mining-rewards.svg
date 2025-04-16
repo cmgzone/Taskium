@@ -1,0 +1,14 @@
+<svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#8B5CF6" />
+  <circle cx="200" cy="80" r="50" fill="#F9FAFB" opacity="0.7" />
+  <path d="M180 70 L220 70" stroke="#8B5CF6" stroke-width="6" />
+  <path d="M180 90 L220 90" stroke="#8B5CF6" stroke-width="6" />
+  <path d="M200 50 L200 110" stroke="#8B5CF6" stroke-width="6" />
+  <text x="200" y="150" font-family="Arial" font-size="24" text-anchor="middle" fill="#FFFFFF">Mining Rewards</text>
+  <text x="200" y="175" font-family="Arial" font-size="16" text-anchor="middle" fill="#FFFFFF">Doubled for Premium Members</text>
+  <circle cx="130" cy="70" r="15" fill="#F9FAFB" />
+  <circle cx="270" cy="70" r="15" fill="#F9FAFB" />
+  <path d="M125 70 L135 70" stroke="#8B5CF6" stroke-width="3" />
+  <path d="M265 70 L275 70" stroke="#8B5CF6" stroke-width="3" />
+  <path d="M270 65 L270 75" stroke="#8B5CF6" stroke-width="3" />
+</svg>

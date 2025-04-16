@@ -1,0 +1,15 @@
+<svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#10B981" />
+  <circle cx="120" cy="90" r="40" fill="#F9FAFB" />
+  <circle cx="280" cy="90" r="40" fill="#F9FAFB" />
+  <text x="120" y="95" font-family="Arial" font-size="20" text-anchor="middle" fill="#10B981">YOU</text>
+  <text x="280" y="95" font-family="Arial" font-size="20" text-anchor="middle" fill="#10B981">FRIEND</text>
+  <path d="M160 90 L240 90" stroke="#F9FAFB" stroke-width="5" marker-end="url(#arrow)" />
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#F9FAFB" />
+    </marker>
+  </defs>
+  <text x="200" y="160" font-family="Arial" font-size="24" text-anchor="middle" fill="#FFFFFF">Earn 100 TSK Tokens</text>
+  <text x="200" y="180" font-family="Arial" font-size="16" text-anchor="middle" fill="#FFFFFF">For every friend you refer</text>
+</svg>

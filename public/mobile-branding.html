@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobile Branding</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .preview-section {
+      margin-bottom: 40px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
+    .purple-bg {
+      background-color: #8c52ff;
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      color: #19466B;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+    .centered {
+      text-align: center;
+    }
+    .image-container {
+      margin-bottom: 20px;
+    }
+    .url-box {
+      padding: 10px;
+      background-color: #eee;
+      border-radius: 4px;
+      font-family: monospace;
+      margin-bottom: 10px;
+      word-break: break-all;
+    }
+    button {
+      padding: 8px 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .api-result {
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 15px;
+      margin-top: 20px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>Mobile Branding Management</h1>
+  
+  <div class="preview-section">
+    <h2>Logo Preview</h2>
+    
+    <div class="purple-bg centered">
+      <h3>Mobile App Header (Purple Background)</h3>
+      <img src="/mobile-logo.svg" alt="White Logo" style="max-width: 150px;">
+    </div>
+    
+    <div class="centered">
+      <h3>Desktop Application (White Background)</h3>
+      <img src="/icons/custom-checkmark-logo.svg" alt="Blue Logo" style="max-width: 150px;">
+    </div>
+  </div>
+  
+  <div class="preview-section">
+    <h2>Logo URLs for Configuration</h2>
+    
+    <div class="image-container">
+      <h3>Desktop Logo (Blue)</h3>
+      <div class="url-box">/icons/custom-checkmark-logo.svg</div>
+      <button onclick="copyToClipboard('/icons/custom-checkmark-logo.svg')">Copy URL</button>
+      <button onclick="updateBranding('/icons/custom-checkmark-logo.svg', null)">Set as Main Logo</button>
+    </div>
+    
+    <div class="image-container">
+      <h3>Mobile Logo (White)</h3>
+      <div class="url-box">/mobile-logo.svg</div>
+      <button onclick="copyToClipboard('/mobile-logo.svg')">Copy URL</button>
+      <button onclick="updateBranding(null, '/mobile-logo.svg')">Set as Mobile Logo</button>
+    </div>
+    
+    <div class="image-container">
+      <h3>Set Both Logos</h3>
+      <button onclick="updateBranding('/icons/custom-checkmark-logo.svg', '/mobile-logo.svg')">Update Both Logos</button>
+    </div>
+  </div>
+  
+  <div class="preview-section">
+    <h2>Current Branding Settings</h2>
+    <button id="fetchSettings">Fetch Current Settings</button>
+    <div id="apiResult" class="api-result" style="display: none;">
+      <pre id="apiResultContent"></pre>
+    </div>
+  </div>
+  
+  <script>
+    // Copy text to clipboard
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          alert('URL copied to clipboard!');
+        })
+        .catch(err => {
+          console.error('Could not copy text: ', err);
+        });
+    }
+    
+    // Update branding settings
+    async function updateBranding(mainLogo, mobileLogo) {
+      try {
+        // Get current settings first
+        const currentSettings = await fetch('/api/direct-branding-settings')
+          .then(res => res.json())
+          .catch(() => ({
+            siteName: 'TSK Platform',
+            siteTagline: 'The Future of AI Knowledge Management',
+            primaryColor: '#19466B',
+            logoType: 'custom',
+            enableCustomBranding: true
+          }));
+        
+        // Prepare updated settings
+        const updatedSettings = {
+          ...currentSettings,
+          logoType: 'custom',
+          enableCustomBranding: true
+        };
+        
+        // Update logos if provided
+        if (mainLogo) {
+          updatedSettings.logoUrl = mainLogo;
+        }
+        
+        if (mobileLogo) {
+          updatedSettings.mobileLogoUrl = mobileLogo;
+        }
+        
+        // Send update request
+        const response = await fetch('/api/direct-branding-settings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedSettings)
+        });
+        
+        const result = await response.json();
+        
+        // Show result
+        showApiResult(result);
+        
+        if (result.success) {
+          alert('Branding settings updated successfully!');
+        } else {
+          alert('Error updating branding settings: ' + (result.error || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Error updating branding:', error);
+        alert('Error updating branding: ' + error.message);
+      }
+    }
+    
+    // Fetch current branding settings
+    document.getElementById('fetchSettings').addEventListener('click', async function() {
+      try {
+        const response = await fetch('/api/direct-branding-settings');
+        const data = await response.json();
+        
+        showApiResult(data);
+      } catch (error) {
+        console.error('Error fetching branding settings:', error);
+        showApiResult({
+          error: error.message,
+          success: false
+        });
+      }
+    });
+    
+    // Helper to display API results
+    function showApiResult(data) {
+      const apiResult = document.getElementById('apiResult');
+      const apiResultContent = document.getElementById('apiResultContent');
+      
+      apiResult.style.display = 'block';
+      apiResultContent.textContent = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>

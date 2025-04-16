@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taskium Logo - SVG to PNG Conversion</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #333;
+      border-bottom: 2px solid #8c52ff;
+      padding-bottom: 10px;
+    }
+    .logo-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin: 30px 0;
+    }
+    .logo-item {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      width: 300px;
+    }
+    .logo-display {
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+    .purple-bg {
+      background-color: #8c52ff;
+    }
+    .logo-info {
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .logo-path {
+      font-family: monospace;
+      word-break: break-all;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    canvas {
+      max-width: 100%;
+      max-height: 100%;
+    }
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    button {
+      padding: 8px 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #status {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      display: none;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <h1>Taskium Logo - SVG to PNG Conversion</h1>
+  
+  <p>This page helps convert the SVG logos to PNG format for better compatibility in mobile environments.</p>
+  
+  <div class="logo-container">
+    <div class="logo-item">
+      <h3>White Logo (for Purple Background)</h3>
+      <div class="logo-display purple-bg">
+        <img src="/taskium-logo.svg" alt="White Logo" id="whiteLogo" style="max-width: 80%; max-height: 80%;">
+      </div>
+      <div class="logo-info">
+        <div><strong>Source Format:</strong> SVG</div>
+        <div class="logo-path">/taskium-logo.svg</div>
+      </div>
+      <div class="button-row">
+        <button onclick="convertToPng('whiteLogo', true)">Convert to PNG</button>
+      </div>
+    </div>
+    
+    <div class="logo-item">
+      <h3>Blue Logo (for White Background)</h3>
+      <div class="logo-display">
+        <img src="/icons/custom-checkmark-logo.svg" alt="Blue Logo" id="blueLogo" style="max-width: 80%; max-height: 80%;">
+      </div>
+      <div class="logo-info">
+        <div><strong>Source Format:</strong> SVG</div>
+        <div class="logo-path">/icons/custom-checkmark-logo.svg</div>
+      </div>
+      <div class="button-row">
+        <button onclick="convertToPng('blueLogo', false)">Convert to PNG</button>
+      </div>
+    </div>
+  </div>
+  
+  <div id="convertedContainer" style="display: none;">
+    <h2>Converted PNG Files</h2>
+    <p>Right-click on the images below and select "Save Image As..." to download the PNG version.</p>
+    
+    <div class="logo-container">
+      <div class="logo-item" id="whiteConverted" style="display: none;">
+        <h3>White Logo (PNG)</h3>
+        <div class="logo-display purple-bg">
+          <canvas id="whiteCanvas"></canvas>
+        </div>
+        <div class="button-row">
+          <button onclick="downloadPng('whiteCanvas', 'taskium-logo-white.png')">Download PNG</button>
+        </div>
+      </div>
+      
+      <div class="logo-item" id="blueConverted" style="display: none;">
+        <h3>Blue Logo (PNG)</h3>
+        <div class="logo-display">
+          <canvas id="blueCanvas"></canvas>
+        </div>
+        <div class="button-row">
+          <button onclick="downloadPng('blueCanvas', 'taskium-logo-blue.png')">Download PNG</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="status"></div>
+  
+  <script>
+    function convertToPng(logoId, isWhite) {
+      const img = document.getElementById(logoId);
+      const canvas = document.getElementById(isWhite ? 'whiteCanvas' : 'blueCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Set canvas size to match the image (with some scaling for quality)
+      const scale = 2; // Increase size for better quality
+      canvas.width = img.naturalWidth * scale;
+      canvas.height = img.naturalHeight * scale;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // If it's the white logo, fill with purple background first
+      if (isWhite) {
+        ctx.fillStyle = '#8c52ff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      
+      // Draw the image
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      
+      // Show the converted container
+      document.getElementById('convertedContainer').style.display = 'block';
+      document.getElementById(isWhite ? 'whiteConverted' : 'blueConverted').style.display = 'block';
+      
+      // Show success message
+      const status = document.getElementById('status');
+      status.textContent = `Successfully converted ${isWhite ? 'white' : 'blue'} logo to PNG`;
+      status.className = 'success';
+      status.style.display = 'block';
+    }
+    
+    function downloadPng(canvasId, fileName) {
+      const canvas = document.getElementById(canvasId);
+      const link = document.createElement('a');
+      
+      link.download = fileName;
+      link.href = canvas.toDataURL('image/png');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>

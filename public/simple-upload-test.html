@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Logo Upload Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .preview-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .preview-bg {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+        }
+        .purple-bg {
+            background-color: #8844cc;
+        }
+        .white-bg {
+            background-color: white;
+            border: 1px solid #ddd;
+        }
+        img {
+            max-height: 60px;
+            max-width: 200px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        pre {
+            background-color: #f8f8f8;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: auto;
+            max-height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Logo Upload Test</h1>
+    <p>This page directly tests the logo upload functionality.</p>
+    
+    <form id="uploadForm">
+        <div class="form-group">
+            <label for="logoFile">Select Logo File:</label>
+            <input type="file" id="logoFile" name="logo" accept="image/png,image/jpeg,image/jpg,image/svg+xml">
+        </div>
+        <button type="submit">Upload Logo</button>
+    </form>
+    
+    <div class="preview-container" id="previewContainer" style="display: none;">
+        <h3>Logo Preview:</h3>
+        <div class="preview-bg purple-bg">
+            <img id="purplePreview" src="" alt="Logo on Purple">
+        </div>
+        <div class="preview-bg white-bg">
+            <img id="whitePreview" src="" alt="Logo on White">
+        </div>
+    </div>
+    
+    <h3>Response:</h3>
+    <pre id="result">No upload yet</pre>
+    
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('logoFile');
+            const resultElement = document.getElementById('result');
+            
+            if (!fileInput.files.length) {
+                resultElement.textContent = 'Please select a file first';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            console.log('Uploading file:', file.name, file.type, file.size, 'bytes');
+            
+            // Show file preview before upload
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('purplePreview').src = e.target.result;
+                document.getElementById('whitePreview').src = e.target.result;
+                document.getElementById('previewContainer').style.display = 'flex';
+            };
+            reader.readAsDataURL(file);
+            
+            // Create FormData object for file upload
+            const formData = new FormData();
+            formData.append('logo', file);
+            
+            resultElement.textContent = 'Uploading...';
+            
+            try {
+                // Direct call to the upload endpoint
+                const response = await fetch('/api/direct-logo-upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                console.log('Response status:', response.status);
+                const text = await response.text();
+                
+                try {
+                    // Try to parse as JSON first
+                    const data = JSON.parse(text);
+                    console.log('Upload response:', data);
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                    
+                    if (data.success && data.logoUrl) {
+                        const logoUrl = data.logoUrl + '?t=' + Date.now(); // Add timestamp to prevent caching
+                        document.getElementById('purplePreview').src = logoUrl;
+                        document.getElementById('whitePreview').src = logoUrl;
+                    }
+                } catch (e) {
+                    // If not JSON, show the raw text
+                    resultElement.textContent = text;
+                }
+            } catch (error) {
+                console.error('Error uploading logo:', error);
+                resultElement.textContent = `Error: ${error.message}`;
+            }
+        });
+        
+        // Preview file when selected
+        document.getElementById('logoFile').addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('purplePreview').src = e.target.result;
+                    document.getElementById('whitePreview').src = e.target.result;
+                    document.getElementById('previewContainer').style.display = 'flex';
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    </script>
+</body>
+</html>

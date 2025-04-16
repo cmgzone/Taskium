@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="192px" height="192px" viewBox="0 0 192 192" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="96" cy="96" r="86" fill="#7C3AED"/>
+  <text x="96" y="116" font-family="Arial, sans-serif" font-size="80" text-anchor="middle" fill="white">TSK</text>
+  <path d="M96,10 C47.4,10 8,49.4 8,98 C8,146.6 47.4,186 96,186 C144.6,186 184,146.6 184,98 C184,49.4 144.6,10 96,10 Z M96,20 C139.1,20 174,54.9 174,98 C174,141.1 139.1,176 96,176 C52.9,176 18,141.1 18,98 C18,54.9 52.9,20 96,20 Z" fill="#6D28D9"/>
+</svg>

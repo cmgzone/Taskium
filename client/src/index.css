@@ -1,0 +1,667 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Ad animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slideInBottom {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 99, 102, 241), 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(var(--primary-rgb, 99, 102, 241), 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 99, 102, 241), 0); }
+}
+
+/* Advanced Mining Animations */
+@keyframes mining-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes mining-pulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 99, 102, 241), 0.7); }
+  50% { transform: scale(1.05); box-shadow: 0 0 25px 5px rgba(var(--primary-rgb, 99, 102, 241), 0.5); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 99, 102, 241), 0.7); }
+}
+
+@keyframes mining-active {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+  50% { box-shadow: 0 0 20px 5px rgba(34, 197, 94, 0.5); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+}
+
+@keyframes mining-success {
+  0% { transform: scale(1); }
+  10% { transform: scale(1.2); }
+  20% { transform: scale(1); }
+  30% { transform: scale(1.1); }
+  40% { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes coin-pop {
+  0% { opacity: 0; transform: scale(0) translateY(0); }
+  50% { opacity: 1; transform: scale(1.2) translateY(-20px); }
+  100% { opacity: 0; transform: scale(1) translateY(-40px); }
+}
+
+@keyframes sparkle {
+  0% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+  100% { opacity: 0; transform: scale(0) rotate(360deg); }
+}
+
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 3s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.5s ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.5s ease-out;
+}
+
+.animate-slide-in-bottom {
+  animation: slideInBottom 0.5s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.animate-glow {
+  animation: glow 2s infinite;
+}
+
+/* Mining Animation Classes */
+.pulse-animation {
+  animation: mining-pulse 2s infinite ease-in-out;
+}
+
+.mining-active-animation {
+  animation: mining-active 2s infinite ease-in-out;
+}
+
+.mining-success-animation {
+  animation: mining-success 0.8s ease-out;
+}
+
+.mining-spin-animation {
+  animation: mining-spin 1.5s infinite linear;
+}
+
+/* Mining coin pop animation container */
+.coin-pop-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Individual coin animations */
+.coin-pop {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 215, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 10px;
+  animation: coin-pop 1.5s ease-out forwards;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* Sparkle animations for success state */
+.sparkle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: sparkle 0.8s ease-out forwards;
+}
+
+/* Mining button state classes */
+.mining-button-ready {
+  background: linear-gradient(145deg, rgba(var(--primary-rgb, 99, 102, 241), 0.1), rgba(var(--primary-rgb, 99, 102, 241), 0.2));
+  transition: all 0.3s ease;
+}
+
+.mining-button-ready:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 20px 5px rgba(var(--primary-rgb, 99, 102, 241), 0.3);
+}
+
+.mining-button-mining {
+  background: linear-gradient(145deg, rgba(var(--primary-rgb, 99, 102, 241), 0.4), rgba(var(--primary-rgb, 99, 102, 241), 0.6));
+  box-shadow: 0 0 30px 8px rgba(var(--primary-rgb, 99, 102, 241), 0.5);
+}
+
+.mining-button-success {
+  background: linear-gradient(145deg, rgba(34, 197, 94, 0.4), rgba(34, 197, 94, 0.6));
+  box-shadow: 0 0 30px 8px rgba(34, 197, 94, 0.5);
+}
+
+.mining-button-active {
+  background: linear-gradient(145deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.3));
+  box-shadow: 0 0 15px 5px rgba(34, 197, 94, 0.3);
+}
+
+/* Mining progress ring animation */
+.mining-progress-ring {
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transition: stroke-dashoffset 0.35s;
+}
+
+.mining-progress-ring-bg {
+  stroke: rgba(var(--primary-rgb, 99, 102, 241), 0.1);
+}
+
+.mining-progress-ring-fg {
+  stroke: rgba(var(--primary-rgb, 99, 102, 241), 0.6);
+  stroke-linecap: round;
+}
+
+/* Active mining progress ring */
+.mining-active-ring-bg {
+  stroke: rgba(34, 197, 94, 0.1);
+}
+
+.mining-active-ring-fg {
+  stroke: rgba(34, 197, 94, 0.6);
+  stroke-linecap: round;
+}
+
+/* Offline indicator styles */
+.offline-mode {
+  /* Add subtle indicators for offline mode */
+  position: relative;
+}
+
+/* Floating offline indicator */
+.offline-mode::before {
+  content: "Offline Mode";
+  position: fixed;
+  top: 8px;
+  right: 12px;
+  background: linear-gradient(135deg, #ff9800, #ff5722);
+  color: white;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+  z-index: 1000;
+  opacity: 0.95;
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.4);
+  animation: pulse-opacity 2s infinite ease-in-out;
+}
+
+/* Subtle pulsing animation for the offline indicator */
+@keyframes pulse-opacity {
+  0%, 100% { opacity: 0.95; }
+  50% { opacity: 0.7; }
+}
+
+/* Make offline components visually distinct */
+.offline-mode .mining-card {
+  border: 2px solid #ff9800;
+  position: relative;
+}
+
+.offline-mode .mining-card::after {
+  content: "Offline Mining";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 152, 0, 0.2);
+  color: #ff9800;
+  padding: 4px 8px;
+  font-size: 10px;
+  border-radius: 4px;
+  z-index: 10;
+}
+
+/* Pulse animation for mining in offline mode */
+@keyframes offline-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(255, 152, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 152, 0, 0);
+  }
+}
+
+.offline-mode .mining-active {
+  animation: offline-pulse 2s infinite;
+}
+
+/* Add a dashed border to anything with .offline-sync-pending class */
+.offline-sync-pending {
+  border: 2px dashed #ff9800 !important;
+  background-color: rgba(255, 152, 0, 0.1) !important;
+}
+
+/* Dimmed element style for anything not usable offline */
+.offline-mode .requires-online {
+  opacity: 0.5;
+  pointer-events: none;
+  position: relative;
+}
+
+.offline-mode .requires-online::after {
+  content: "Requires connection";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Define CSS variables for the blockchain-themed colors */
+:root {
+  /* Theme colors (controlled dynamically by ThemeProvider) */
+  --theme-primary: hsl(262.1 83.3% 57.8%);
+  --theme-accent: hsl(262.1 83.3% 57.8%);
+
+  /* Light mode colors */
+  --background: 0 0% 100%;
+  --foreground: 224 71.4% 4.1%;
+  --card: 0 0% 100%;
+  --card-foreground: 224 71.4% 4.1%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 224 71.4% 4.1%;
+  
+  /* Primary uses the dynamic theme color */
+  --primary: var(--sidebar-primary, 262.1 83.3% 57.8%);
+  --primary-foreground: 210 20% 98%;
+  
+  --secondary: 220 14.3% 95.9%;
+  --secondary-foreground: 220.9 39.3% 11%;
+  --muted: 220 14.3% 95.9%;
+  --muted-foreground: 220 8.9% 46.1%;
+  
+  /* Accent uses the dynamic theme color */
+  --accent: var(--sidebar-primary, 262.1 83.3% 57.8%);
+  --accent-foreground: 210 20% 98%;
+  
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: var(--sidebar-primary, 262.1 83.3% 57.8%);
+  
+  /* Chart colors - first one is themed */
+  --chart-1: var(--sidebar-primary, 262.1 83.3% 57.8%);
+  --chart-2: 190 95% 39%;
+  --chart-3: 119 96% 37%;
+  --chart-4: 45 93% 47%;
+  --chart-5: 0 84.2% 60.2%;
+
+  /* Sidebar colors */
+  --sidebar-background: 224 5% 26%;
+  --sidebar-foreground: 210 20% 98%;
+  --sidebar-primary: 262.1 83.3% 57.8%;
+  --sidebar-primary-foreground: 210 20% 98%;
+  --sidebar-accent: 262.1 63.3% 67.8%;
+  --sidebar-accent-foreground: 210 20% 98%;
+  --sidebar-border: 225 9% 33%;
+  --sidebar-ring: var(--sidebar-primary, 262.1 83.3% 57.8%);
+}
+
+/* Dark mode theme */
+.dark {
+  --background: 224 71.4% 4.1%;
+  --foreground: 210 20% 98%;
+  --card: 224 71.4% 4.1%;
+  --card-foreground: 210 20% 98%;
+  --popover: 224 71.4% 4.1%;
+  --popover-foreground: 210 20% 98%;
+  
+  /* Primary uses the dynamic theme color */
+  --primary: var(--sidebar-primary, 263.4 70% 50.4%);
+  --primary-foreground: 210 20% 98%;
+  
+  --secondary: 215 27.9% 16.9%;
+  --secondary-foreground: 210 20% 98%;
+  --muted: 215 27.9% 16.9%;
+  --muted-foreground: 217.9 10.6% 64.9%;
+  
+  /* Accent uses the dynamic theme color */
+  --accent: var(--sidebar-primary, 263.4 70% 50.4%);
+  --accent-foreground: 210 20% 98%;
+  
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 215 27.9% 16.9%;
+  --input: 215 27.9% 16.9%;
+  --ring: var(--sidebar-primary, 263.4 70% 50.4%);
+  
+  /* Chart colors - slightly brighter for dark mode */
+  --chart-1: var(--sidebar-primary, 263.4 70% 50.4%);
+  --chart-2: 190 95% 49%;
+  --chart-3: 119 96% 47%;
+  --chart-4: 45 93% 57%;
+  --chart-5: 0 84.2% 70.2%;
+
+  /* Sidebar colors - darker for dark mode */
+  --sidebar-background: 224 20% 10%;
+  --sidebar-foreground: 210 20% 98%;
+  --sidebar-primary: 263.4 70% 50.4%;
+  --sidebar-primary-foreground: 210 20% 98%;
+  --sidebar-accent: 263.4 70% 60.4%;
+  --sidebar-accent-foreground: 210 20% 98%;
+  --sidebar-border: 225 20% 20%;
+  --sidebar-ring: var(--sidebar-primary, 263.4 70% 50.4%);
+}
+
+/* These CSS custom properties will be dynamically updated by the theme provider */
+:root {
+  /* These will be overridden by theme-provider.tsx using the blockchain-themed colors */
+  --primary: hsl(var(--primary));
+  --primary-foreground: hsl(var(--primary-foreground));
+  --accent: hsl(var(--accent));
+  --accent-foreground: hsl(var(--accent-foreground));
+  
+  /* Blockchain-themed specific custom properties */
+  --theme-name: "Default";
+  --theme-description: "The standard TSK Platform theme";
+  
+  /* Theme-specific gradients */
+  --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+  --gradient-button: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+  --gradient-card: linear-gradient(135deg, hsl(var(--primary)/0.1), hsl(var(--accent)/0.05));
+  --gradient-sidebar: linear-gradient(180deg, hsl(var(--sidebar-background)), hsl(var(--sidebar-background)/0.9));
+  
+  /* Custom scheme-based properties - will be updated by theme-provider.tsx */
+  --scheme-token-card-bg: linear-gradient(135deg, hsl(var(--primary)/0.1), hsl(var(--accent)/0.05));
+  --scheme-mining-glow: 0 0 15px hsl(var(--primary)/0.5);
+  --scheme-card-highlight: hsl(var(--primary)/0.1);
+  --scheme-success-color: hsl(142 71% 45%);
+  --scheme-warning-color: hsl(38 92% 50%);
+  --scheme-info-color: hsl(198 93% 60%);
+  --scheme-error-color: hsl(0 84% 60%);
+}
+
+@layer base {
+  * {
+    @apply border-border transition-colors duration-200;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground tracking-tight;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium tracking-tight;
+  }
+
+  button, a {
+    @apply transition-all duration-200;
+  }
+
+  input, select, textarea {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/20;
+  }
+}
+
+@layer components {
+  /* Mining error toast styling */
+  .mining-error-toast {
+    @apply rounded-xl bg-background border-0 shadow-lg;
+  }
+  
+  .mining-error-toast > div {
+    @apply p-4;
+  }
+  
+  .mining-error-toast [role="status"] {
+    @apply bg-blue-50 dark:bg-blue-950 rounded-lg border-l-4 border-blue-500 dark:border-blue-400;
+  }
+  
+  .card-hover {
+    @apply hover:shadow-soft hover:scale-[1.02] transition-all duration-300;
+  }
+
+  .glass-effect {
+    @apply bg-white/10 backdrop-blur-lg border border-primary/20 shadow-xl dark:bg-gray-800/30;
+  }
+
+  .button-glow {
+    @apply hover:shadow-glow hover:scale-[1.02] transition-all duration-300;
+  }
+
+  .gradient-border {
+    @apply border border-transparent bg-gradient-to-r from-primary/20 to-accent/20;
+  }
+
+  .auth-form {
+    @apply p-8 rounded-xl bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/10 shadow-2xl;
+  }
+
+  .auth-input {
+    @apply bg-background/50 border-primary/20 focus:border-primary/40 transition-all duration-300;
+  }
+
+  .auth-button {
+    @apply bg-primary/90 hover:bg-primary transition-all duration-300 shadow-lg hover:shadow-primary/20;
+  }
+  
+  /* Theme selector styles */
+  .theme-selector {
+    @apply p-4 rounded-lg border border-border transition-all duration-300;
+  }
+  
+  .theme-selector.active {
+    @apply border-primary ring-2 ring-primary/30;
+  }
+  
+  .theme-option {
+    @apply flex items-center justify-between w-full p-2 rounded-md cursor-pointer hover:bg-muted/50 transition-all duration-200;
+  }
+  
+  .theme-option.active {
+    @apply bg-primary/10 font-medium;
+  }
+  
+  .color-swatch {
+    @apply inline-block h-4 w-4 rounded-full border border-border transition-all duration-200;
+  }
+  
+  /* Mobile & PWA specific styles */
+  .mobile-device button,
+  .mobile-device .button,
+  .mobile-device a.button {
+    @apply min-h-[44px] min-w-[44px]; /* Meet accessibility tap target size */
+  }
+  
+  .mobile-device input,
+  .mobile-device select,
+  .mobile-device textarea {
+    @apply text-base; /* Prevent iOS zoom on focus */
+  }
+  
+  /* PWA specific styles */
+  .pwa-mode {
+    /* Add styles specific to when the app is running as a PWA */
+    height: 100vh; /* Use viewport height */
+    overflow: hidden; /* Prevent scrolling in PWA mode */
+  }
+  
+  .pwa-mode body {
+    /* Ensure the body takes up full height and handles overflow properly */
+    height: 100%;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    overscroll-behavior: none; /* Prevent pull-to-refresh */
+  }
+  
+  /* Hide browser UI in PWA mode */
+  @media (display-mode: standalone) {
+    .browser-only {
+      display: none;
+    }
+  }
+  
+  /* Bottom navigation for mobile */
+  .mobile-nav-bar {
+    @apply fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border
+           py-2 px-4 flex justify-around items-center shadow-lg;
+  }
+  
+  /* Adjust content area when mobile nav is present */
+  .has-mobile-nav main {
+    @apply pb-16 pt-0; /* Only add bottom padding since we removed the header */
+  }
+  
+  /* Improve menu button visibility in dark mode */
+  .dark .mobile-menu-button {
+    @apply bg-gray-700 text-gray-200 hover:bg-gray-600;
+  }
+  
+  /* Fix sidebar scrolling issues */
+  .sidebar-content {
+    @apply h-full overflow-y-auto pb-20;
+  }
+  
+  /* Blockchain-themed components */
+  .token-card {
+    @apply relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-background to-background/90 p-6 backdrop-blur-sm transition-all duration-300 hover:shadow-lg;
+    background-image: var(--scheme-token-card-bg);
+  }
+  
+  .mining-glow {
+    box-shadow: var(--scheme-mining-glow);
+  }
+  
+  /* Theme-specific card highlights */
+  .card-highlight {
+    @apply relative overflow-hidden;
+  }
+  
+  .card-highlight::before {
+    content: "";
+    @apply absolute inset-0 bg-gradient-to-br opacity-10 pointer-events-none transition-opacity duration-300;
+    background-color: var(--scheme-card-highlight);
+  }
+  
+  /* Data attribute based styles for different blockchain themes */
+  [data-color-scheme="bitcoin"] .bitcoin-accent {
+    @apply text-yellow-500 dark:text-yellow-400;
+  }
+  
+  [data-color-scheme="ethereum"] .ethereum-accent {
+    @apply text-blue-500 dark:text-blue-400;
+  }
+  
+  [data-color-scheme="bnb"] .bnb-accent {
+    @apply text-yellow-500 dark:text-yellow-400;
+  }
+  
+  /* Custom animation for theme transitions */
+  @keyframes theme-transition {
+    0% { opacity: 0; transform: scale(0.98); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  
+  /* Apply theme transition animation to main content */
+  .theme-transition {
+    animation: theme-transition 0.3s ease-out;
+  }
+  
+  /* Card stack effect for themed components */
+  .card-stack {
+    @apply relative;
+  }
+  
+  .card-stack::before,
+  .card-stack::after {
+    content: "";
+    @apply absolute inset-0 rounded-xl border border-primary/20 bg-gradient-to-br from-background to-background/90 -z-10;
+  }
+  
+  .card-stack::before {
+    transform: rotate(-2deg) translateY(4px);
+    opacity: 0.7;
+  }
+  
+  .card-stack::after {
+    transform: rotate(1deg) translateY(2px);
+    opacity: 0.4;
+  }
+  
+  /* Adaptive status indicators with theme colors */
+  .status-indicator {
+    @apply h-2 w-2 rounded-full;
+  }
+  
+  .status-indicator.success {
+    background-color: var(--scheme-success-color);
+  }
+  
+  .status-indicator.warning {
+    background-color: var(--scheme-warning-color);
+  }
+  
+  .status-indicator.info {
+    background-color: var(--scheme-info-color);
+  }
+  
+  .status-indicator.error {
+    background-color: var(--scheme-error-color);
+  }
+  
+  /* Theme switcher animation */
+  .theme-animate {
+    transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
+  }
+}

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Branding Settings Direct Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1, h2 {
+            color: #19466B;
+        }
+        pre {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #19466B;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0d2b47;
+        }
+        .logo-preview {
+            background-color: #19466B;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .logo-preview img {
+            max-height: 60px;
+            max-width: 100%;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Branding Settings Direct Test</h1>
+    <p>This tool directly tests and debugs the branding settings API without using React.</p>
+    
+    <div class="card">
+        <h2>1. Fetch Branding Settings</h2>
+        <button id="fetchSettingsBtn">Fetch Branding Settings</button>
+        <div id="settingsStatus" class="status"></div>
+        <pre id="settingsOutput">Click the button to fetch settings...</pre>
+        
+        <div class="logo-preview" id="logoPreview">
+            <span>Logo will appear here</span>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2>2. Test Logo Display</h2>
+        <p>This will test direct access to the logo using a standard img tag:</p>
+        <table>
+            <tr>
+                <th>Type</th>
+                <th>Preview</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>Using logoUrl</td>
+                <td id="directLogoCell">Loading...</td>
+                <td id="directLogoStatus">Not tested</td>
+            </tr>
+            <tr>
+                <td>Relative path</td>
+                <td><img src="/icons/custom-checkmark-logo.svg" alt="Logo" height="40" id="staticLogoImg"></td>
+                <td id="staticLogoStatus">Not tested</td>
+            </tr>
+            <tr>
+                <td>Absolute path</td>
+                <td><img src="http://localhost:5000/icons/custom-checkmark-logo.svg" alt="Logo" height="40" id="absoluteLogoImg"></td>
+                <td id="absoluteLogoStatus">Not tested</td>
+            </tr>
+        </table>
+        
+        <button id="testDirectAccessBtn">Test Direct Logo Access</button>
+    </div>
+    
+    <script>
+        // Elements
+        const fetchSettingsBtn = document.getElementById('fetchSettingsBtn');
+        const settingsOutput = document.getElementById('settingsOutput');
+        const settingsStatus = document.getElementById('settingsStatus');
+        const logoPreview = document.getElementById('logoPreview');
+        const directLogoCell = document.getElementById('directLogoCell');
+        const directLogoStatus = document.getElementById('directLogoStatus');
+        const staticLogoStatus = document.getElementById('staticLogoStatus');
+        const absoluteLogoStatus = document.getElementById('absoluteLogoStatus');
+        const testDirectAccessBtn = document.getElementById('testDirectAccessBtn');
+        const staticLogoImg = document.getElementById('staticLogoImg');
+        const absoluteLogoImg = document.getElementById('absoluteLogoImg');
+        
+        // Global state
+        let brandingSettings = null;
+        
+        // Fetch branding settings
+        fetchSettingsBtn.addEventListener('click', async function() {
+            try {
+                settingsStatus.textContent = 'Fetching...';
+                settingsStatus.className = 'status';
+                
+                const response = await fetch('/api/direct-branding-settings');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                brandingSettings = data;
+                
+                // Format and display the settings
+                settingsOutput.textContent = JSON.stringify(data, null, 2);
+                settingsStatus.textContent = 'Settings fetched successfully!';
+                settingsStatus.className = 'status success';
+                
+                // Update logo preview
+                updateLogoPreview(data.logoUrl);
+                
+                // Setup direct logo test
+                setupDirectLogoTest(data.logoUrl);
+                
+            } catch (error) {
+                settingsStatus.textContent = `Error: ${error.message}`;
+                settingsStatus.className = 'status error';
+                settingsOutput.textContent = `Failed to fetch settings: ${error.message}`;
+                console.error('Fetch error:', error);
+            }
+        });
+        
+        // Update logo preview
+        function updateLogoPreview(logoUrl) {
+            if (!logoUrl) {
+                logoPreview.innerHTML = '<span>No logo URL available</span>';
+                return;
+            }
+            
+            logoPreview.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = logoUrl;
+            img.alt = 'Platform Logo';
+            
+            img.onload = function() {
+                console.log('Logo loaded successfully');
+            };
+            
+            img.onerror = function() {
+                console.error('Failed to load logo from', logoUrl);
+                logoPreview.innerHTML = `
+                    <div style="color: white; background-color: rgba(255,0,0,0.3); padding: 10px; border-radius: 4px;">
+                        Error loading logo from: ${logoUrl}
+                        <br><br>
+                        <img src="/taskium-logo.svg" alt="Default Logo" height="40">
+                    </div>
+                `;
+            };
+            
+            logoPreview.appendChild(img);
+        }
+        
+        // Setup direct logo test
+        function setupDirectLogoTest(logoUrl) {
+            if (!logoUrl) {
+                directLogoCell.innerHTML = '<span>No logo URL available</span>';
+                directLogoStatus.textContent = 'N/A';
+                return;
+            }
+            
+            directLogoCell.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = logoUrl;
+            img.alt = 'Direct Logo';
+            img.height = 40;
+            
+            img.onload = function() {
+                directLogoStatus.textContent = 'Loaded successfully';
+                directLogoStatus.style.color = 'green';
+            };
+            
+            img.onerror = function() {
+                directLogoStatus.textContent = 'Failed to load';
+                directLogoStatus.style.color = 'red';
+            };
+            
+            directLogoCell.appendChild(img);
+        }
+        
+        // Static logo tests
+        staticLogoImg.onload = function() {
+            staticLogoStatus.textContent = 'Loaded successfully';
+            staticLogoStatus.style.color = 'green';
+        };
+        
+        staticLogoImg.onerror = function() {
+            staticLogoStatus.textContent = 'Failed to load';
+            staticLogoStatus.style.color = 'red';
+        };
+        
+        // Absolute logo tests
+        absoluteLogoImg.onload = function() {
+            absoluteLogoStatus.textContent = 'Loaded successfully';
+            absoluteLogoStatus.style.color = 'green';
+        };
+        
+        absoluteLogoImg.onerror = function() {
+            absoluteLogoStatus.textContent = 'Failed to load';
+            absoluteLogoStatus.style.color = 'red';
+        };
+        
+        // Test direct access
+        testDirectAccessBtn.addEventListener('click', async function() {
+            if (!brandingSettings || !brandingSettings.logoUrl) {
+                alert('Please fetch branding settings first to get the logo URL');
+                return;
+            }
+            
+            try {
+                // Make a direct HEAD request to check if the file exists
+                const response = await fetch(brandingSettings.logoUrl, { method: 'HEAD' });
+                
+                if (response.ok) {
+                    alert(`Direct access successful! Status: ${response.status}`);
+                } else {
+                    alert(`Direct access failed! Status: ${response.status}`);
+                }
+            } catch (error) {
+                alert(`Network error testing direct access: ${error.message}`);
+                console.error('Test error:', error);
+            }
+        });
+        
+        // Initialize: Auto-fetch on load
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchSettingsBtn.click();
+        });
+    </script>
+</body>
+</html>
